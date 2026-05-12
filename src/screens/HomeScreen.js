@@ -117,6 +117,16 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
       )}
 
+      {/* Running Tracks */}
+      <TouchableOpacity style={styles.trackCta} onPress={() => navigation.navigate('TrackList')} activeOpacity={0.85}>
+        <Text style={styles.trackCtaEmoji}>🏟️</Text>
+        <View style={styles.trackCtaInfo}>
+          <Text style={styles.trackCtaTitle}>러닝 트랙</Text>
+          <Text style={styles.trackCtaSub}>레벨별 거리 도전 — 완주 시 보너스 XP & 코인</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={18} color="#555" />
+      </TouchableOpacity>
+
       {/* Daily Missions */}
       <SectionHeader title="오늘의 미션" emoji="🎯" />
       <View style={styles.card}>
@@ -266,6 +276,12 @@ const styles = StyleSheet.create({
   runStats: { alignItems: 'flex-end' },
   runCells: { color: '#22d97a', fontSize: 13, fontWeight: '600' },
   runXp: { color: '#f59e0b', fontSize: 11 },
+
+  trackCta: { marginHorizontal: 12, marginBottom: 8, backgroundColor: '#141c14', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(168,85,247,0.2)', flexDirection: 'row', alignItems: 'center', padding: 14, gap: 12 },
+  trackCtaEmoji: { fontSize: 28 },
+  trackCtaInfo: { flex: 1 },
+  trackCtaTitle: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  trackCtaSub: { color: '#555', fontSize: 12, marginTop: 2 },
 
   deliveryCta: { marginHorizontal: 12, marginBottom: 8, backgroundColor: '#141c14', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', flexDirection: 'row', alignItems: 'center', padding: 14, gap: 12 },
   deliveryEmoji: { fontSize: 28 },

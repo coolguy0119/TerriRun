@@ -200,6 +200,76 @@ export const DAILY_MISSIONS = [
   },
 ];
 
+// ── Running Tracks ─────────────────────────────────────────────
+export const TRACKS = [
+  {
+    id: 'rookie',
+    name: '루키 트랙',
+    emoji: '🟢',
+    requiredLevel: 1,
+    goalMeters: 1000,
+    xpBonus: 150,
+    coinBonus: 30,
+    desc: '1km 목표 달성으로 러닝 입문!',
+    color: '#22d97a',
+  },
+  {
+    id: 'challenger',
+    name: '챌린저 트랙',
+    emoji: '🔵',
+    requiredLevel: 3,
+    goalMeters: 2000,
+    xpBonus: 350,
+    coinBonus: 70,
+    desc: '2km를 달려 챌린저가 되어보세요.',
+    color: '#3b82f6',
+  },
+  {
+    id: 'elite',
+    name: '엘리트 트랙',
+    emoji: '🟡',
+    requiredLevel: 5,
+    goalMeters: 5000,
+    xpBonus: 800,
+    coinBonus: 150,
+    desc: '5km 완주, 진정한 러너의 시작.',
+    color: '#f59e0b',
+  },
+  {
+    id: 'master',
+    name: '마스터 트랙',
+    emoji: '🟠',
+    requiredLevel: 8,
+    goalMeters: 10000,
+    xpBonus: 1800,
+    coinBonus: 300,
+    desc: '10km 풀코스를 정복하세요.',
+    color: '#f97316',
+  },
+  {
+    id: 'legend',
+    name: '레전드 트랙',
+    emoji: '🔴',
+    requiredLevel: 12,
+    goalMeters: 21097,
+    xpBonus: 4000,
+    coinBonus: 600,
+    desc: '하프 마라톤 21km, 전설의 영역.',
+    color: '#ef4444',
+  },
+  {
+    id: 'champion',
+    name: '챔피언 트랙',
+    emoji: '👑',
+    requiredLevel: 17,
+    goalMeters: 42195,
+    xpBonus: 9000,
+    coinBonus: 1200,
+    desc: '풀 마라톤 42km — 최강자만 입장 가능.',
+    color: '#a855f7',
+  },
+];
+
 // ── Item System ───────────────────────────────────────────────
 export const ITEMS = [
   {
