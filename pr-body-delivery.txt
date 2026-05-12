@@ -1,0 +1,39 @@
+﻿## 🛵 영토 배달 주문 기능
+
+달리면서 확보한 영토 주변의 배달 식당을 탐색하고, 원클릭으로 배달 앱에서 주문할 수 있는 기능을 추가했습니다.
+
+## 주요 변경사항
+
+- **`src/services/restaurantService.js`** (신규)
+  - 카카오 로컬 API(`FD6` 카테고리) 연동
+  - API 키 미입력 시 8개 mock 식당 데이터 자동 사용
+
+- **`src/screens/DeliveryScreen.js`** (신규)
+  - 캡처 영토 중심 좌표 자동 계산
+  - 검색 반경 300m / 500m / 1km / 2km 선택
+  - 식당 카드: 카테고리 이모지, 거리, 배달 앱 버튼 표시
+  - 배달의민족 🐣 / 쿠팡이츠 🛵 / 요기요 🍱 딥링크 (앱 없으면 웹 fallback)
+  - 영토 없을 때 empty state + 달리기 유도 버튼
+
+- **`src/screens/HomeScreen.js`**
+  - 영토 보유 시 홈 화면에 배달 CTA 버튼 표시
+
+- **`App.js`**
+  - Stack에 `Delivery` 스크린 추가
+
+## 카카오 API 키 설정 방법
+
+`src/services/restaurantService.js` 상단에 키 입력 시 실제 데이터로 전환됩니다:
+
+```js
+const KAKAO_REST_API_KEY = 'YOUR_KEY_HERE';
+```
+
+## 테스트 방법
+
+1. 달리기로 영토 확보
+2. 홈 화면 하단 "영토 배달 주문" 버튼 탭
+3. 반경 선택 후 식당 목록 확인
+4. 배달 앱 버튼 탭 → 앱 실행 or 웹 열림
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -16,6 +17,8 @@ import TrackListScreen from './src/screens/TrackListScreen';
 import TrackRunScreen from './src/screens/TrackRunScreen';
 import ArenaScreen from './src/screens/ArenaScreen';
 import RaceScreen from './src/screens/RaceScreen';
+import LoginScreen from './src/screens/LoginScreen';
+import { onAuthChange } from './src/services/authService';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -67,6 +70,29 @@ function TabNavigator() {
 }
 
 export default function App() {
+  const [user, setUser] = useState(undefined); // undefined = loading
+
+  useEffect(() => {
+    const unsubscribe = onAuthChange((u) => setUser(u));
+    return unsubscribe;
+  }, []);
+
+  // Loading
+  if (user === undefined) {
+    return <View style={{ flex: 1, backgroundColor: '#0d1117' }} />;
+  }
+
+  // Not logged in
+  if (!user) {
+    return (
+      <SafeAreaProvider>
+        <StatusBar style="light" />
+        <LoginScreen onLogin={setUser} />
+      </SafeAreaProvider>
+    );
+  }
+
+  // Logged in
   return (
     <SafeAreaProvider>
       <NavigationContainer theme={DARK_THEME}>
