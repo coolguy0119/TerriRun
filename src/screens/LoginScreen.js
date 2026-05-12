@@ -1,0 +1,167 @@
+import React, { useState } from 'react';
+import {
+  View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, Image,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { loginWithKakao, isKakaoConfigured } from '../services/kakaoAuthService';
+
+export default function LoginScreen({ onLogin }) {
+  const insets = useSafeAreaInsets();
+  const [loading, setLoading] = useState(false);
+
+  async function handleKakaoLogin() {
+    if (!isKakaoConfigured()) {
+      Alert.alert(
+        '카카오 설정 필요',
+        'src/services/kakaoAuthService.js 파일에 KAKAO_REST_API_KEY를 입력해주세요.\n\n1. https://developers.kakao.com 에서 앱 생성\n2. REST API 키를 파일에 입력',
+        [{ text: '확인' }]
+      );
+      return;
+    }
+    setLoading(true);
+    try {
+      const authData = await loginWithKakao();
+      if (authData) await onLogin(authData);
+    } catch (e) {
+      Alert.alert('로그인 실패', e.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleGuestLogin() {
+    const guestId = `guest_${Date.now()}`;
+    await onLogin({ userId: guestId, isGuest: true, nickname: '게스트', loggedInAt: Date.now() });
+  }
+
+  return (
+    <LinearGradient colors={['#0a0e1a', '#0d1117', '#0a100a']} style={[styles.container, { paddingTop: insets.top }]}>
+      {/* Logo / Title */}
+      <View style={styles.logoArea}>
+        <View style={styles.logoCircle}>
+          <Ionicons name="map" size={52} color="#22d97a" />
+        </View>
+        <Text style={styles.title}>TerraRun</Text>
+        <Text style={styles.subtitle}>달리며 세계를 정복하세요</Text>
+      </View>
+
+      {/* Login Buttons */}
+      <View style={styles.btnArea}>
+        <TouchableOpacity
+          style={styles.kakaoBtn}
+          onPress={handleKakaoLogin}
+          disabled={loading}
+          activeOpacity={0.85}
+        >
+          {loading ? (
+            <ActivityIndicator color="#191919" />
+          ) : (
+            <>
+              <View style={styles.kakaoIconBox}>
+                <Text style={styles.kakaoIcon}>💬</Text>
+              </View>
+              <Text style={styles.kakaoBtnText}>카카오로 시작하기</Text>
+            </>
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.guestBtn} onPress={handleGuestLogin} activeOpacity={0.8}>
+          <Ionicons name="person-outline" size={18} color="#aaa" style={{ marginRight: 8 }} />
+          <Text style={styles.guestBtnText}>게스트로 시작</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Text style={styles.notice}>
+        카카오 계정으로 로그인하면 게임 데이터가{'\n'}클라우드에 저장됩니다.
+      </Text>
+    </LinearGradient>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingBottom: 40,
+  },
+  logoArea: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 14,
+  },
+  logoCircle: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#0f2a18',
+    borderWidth: 2,
+    borderColor: '#22d97a',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: '800',
+    color: '#fff',
+    letterSpacing: 1,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: '#7a9a8a',
+    letterSpacing: 0.5,
+  },
+  btnArea: {
+    width: '100%',
+    paddingHorizontal: 32,
+    gap: 12,
+  },
+  kakaoBtn: {
+    backgroundColor: '#FEE500',
+    borderRadius: 12,
+    height: 52,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  kakaoIconBox: {
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  kakaoIcon: {
+    fontSize: 18,
+  },
+  kakaoBtnText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#191919',
+  },
+  guestBtn: {
+    backgroundColor: 'transparent',
+    borderRadius: 12,
+    height: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  guestBtnText: {
+    fontSize: 15,
+    color: '#aaa',
+    fontWeight: '500',
+  },
+  notice: {
+    marginTop: 24,
+    fontSize: 12,
+    color: '#445',
+    textAlign: 'center',
+    lineHeight: 18,
+  },
+});

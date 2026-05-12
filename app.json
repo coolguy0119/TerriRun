@@ -2,6 +2,7 @@
   "expo": {
     "name": "TerraRun",
     "slug": "terrarun",
+    "scheme": "terrarun",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",

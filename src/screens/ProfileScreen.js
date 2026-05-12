@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, TextInput,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, TextInput, Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,6 +18,7 @@ import {
 } from '../game/GameEngine';
 import ItemShopModal from '../components/ItemShopModal';
 import { formatDistance, formatArea, cellsToArea } from '../utils/geo';
+import { useAuth } from '../context/AuthContext';
 
 const LEADERBOARD = [
   { name: '김서울',   cells: 847, league: '💠' },
@@ -69,6 +70,7 @@ function WeeklyChart({ data }) {
 
 export default function ProfileScreen({ navigation }) {
   const insets = useSafeAreaInsets();
+  const { auth, logout } = useAuth();
   const [player, setPlayer]           = useState(null);
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput]     = useState('');
@@ -140,6 +142,17 @@ export default function ProfileScreen({ navigation }) {
     );
   }
 
+  function handleLogout() {
+    Alert.alert(
+      '로그아웃',
+      auth?.isGuest ? '게스트 모드를 종료하시겠어요?' : '카카오 계정에서 로그아웃 하시겠어요?',
+      [
+        { text: '취소', style: 'cancel' },
+        { text: '로그아웃', style: 'destructive', onPress: logout },
+      ]
+    );
+  }
+
   async function saveName() {
     if (!nameInput.trim()) return;
     const updated = { ...player, name: nameInput.trim() };
@@ -175,9 +188,13 @@ export default function ProfileScreen({ navigation }) {
         </TouchableOpacity>
 
         <View style={styles.avatarArea}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{player.name[0]}</Text>
-          </View>
+          {auth?.profileImage ? (
+            <Image source={{ uri: auth.profileImage }} style={styles.avatarImage} />
+          ) : (
+            <View style={styles.avatar}>
+              <Text style={styles.avatarText}>{player.name[0]}</Text>
+            </View>
+          )}
           {editingName ? (
             <View style={styles.nameEditRow}>
               <TextInput
@@ -199,7 +216,14 @@ export default function ProfileScreen({ navigation }) {
               <Ionicons name="pencil" size={14} color="#555" />
             </TouchableOpacity>
           )}
-          <Text style={styles.leagueBadge}>{league.emoji} {league.name} 리그 · Lv.{player.level}</Text>
+          <View style={styles.leagueRow}>
+            <Text style={styles.leagueBadge}>{league.emoji} {league.name} 리그 · Lv.{player.level}</Text>
+            {!auth?.isGuest && <View style={styles.kakaoBadge}><Text style={styles.kakaoBadgeText}>카카오</Text></View>}
+          </View>
+          <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+            <Ionicons name="log-out-outline" size={14} color="#666" />
+            <Text style={styles.logoutText}>{auth?.isGuest ? '게스트 종료' : '로그아웃'}</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.xpSection}>
@@ -383,7 +407,13 @@ const styles = StyleSheet.create({
   playerName: { color: '#fff', fontSize: 22, fontWeight: '700' },
   nameEditRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },
   nameInput: { color: '#fff', fontSize: 20, fontWeight: '600', borderBottomWidth: 1, borderBottomColor: '#22d97a', paddingVertical: 2, minWidth: 120, textAlign: 'center' },
+  avatarImage: { width: 72, height: 72, borderRadius: 36, marginBottom: 12, borderWidth: 3, borderColor: '#22d97a' },
+  leagueRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
   leagueBadge: { color: '#888', fontSize: 13 },
+  kakaoBadge: { backgroundColor: '#FEE500', borderRadius: 4, paddingHorizontal: 6, paddingVertical: 1 },
+  kakaoBadgeText: { color: '#191919', fontSize: 10, fontWeight: '700' },
+  logoutBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
+  logoutText: { color: '#555', fontSize: 12 },
   xpSection: { gap: 6 },
   xpLabelRow: { flexDirection: 'row', justifyContent: 'space-between' },
   xpLabel: { color: '#22d97a', fontSize: 12, fontWeight: '600' },

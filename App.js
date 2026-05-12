@@ -1,5 +1,6 @@
 import './src/utils/tasks'; // Register background location task
 import React from 'react';
+import { View, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -13,6 +14,8 @@ import ProfileScreen from './src/screens/ProfileScreen';
 import AllianceScreen from './src/screens/AllianceScreen';
 import BattleScreen from './src/screens/BattleScreen';
 import DeliveryScreen from './src/screens/DeliveryScreen';
+import LoginScreen from './src/screens/LoginScreen';
+import { AuthProvider, useAuth } from './src/context/AuthContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -63,17 +66,39 @@ function TabNavigator() {
   );
 }
 
+function AppContent() {
+  const { auth, login, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, backgroundColor: '#0d1117', alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color="#22d97a" />
+      </View>
+    );
+  }
+
+  if (!auth) {
+    return <LoginScreen onLogin={login} />;
+  }
+
+  return (
+    <NavigationContainer theme={DARK_THEME}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Main"     component={TabNavigator} />
+        <Stack.Screen name="Battle"   component={BattleScreen} />
+        <Stack.Screen name="Delivery" component={DeliveryScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
 export default function App() {
   return (
     <SafeAreaProvider>
-      <NavigationContainer theme={DARK_THEME}>
-        <StatusBar style="light" />
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Main"     component={TabNavigator} />
-          <Stack.Screen name="Battle"   component={BattleScreen} />
-          <Stack.Screen name="Delivery" component={DeliveryScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <StatusBar style="light" />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }
