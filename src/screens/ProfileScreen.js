@@ -7,8 +7,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 
-import { getPlayer, savePlayer, checkAndResetDaily } from '../utils/storage';
-import { calcLevel, xpProgress, getLeague, ACHIEVEMENTS, DAILY_MISSIONS } from '../game/GameEngine';
+import { getPlayer, savePlayer, getTerritories, saveTerritories, checkAndResetDaily } from '../utils/storage';
+import { calcLevel, xpProgress, getLeague, ACHIEVEMENTS, DAILY_MISSIONS, SHIELD_COST, SHIELD_DURATION_MS, buyShield } from '../game/GameEngine';
 import { formatDistance, formatArea, cellsToArea } from '../utils/geo';
 
 const LEADERBOARD = [
@@ -24,6 +24,7 @@ export default function ProfileScreen({ navigation }) {
   const [player, setPlayer] = useState(null);
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState('');
+  const [shieldActive, setShieldActive] = useState(false);
 
   useFocusEffect(useCallback(() => { loadPlayer(); }, []));
 
@@ -31,6 +32,23 @@ export default function ProfileScreen({ navigation }) {
     let p = await getPlayer();
     p = checkAndResetDaily(p);
     setPlayer(p);
+    const terr = await getTerritories();
+    const now = Date.now();
+    setShieldActive(Object.values(terr).some((c) => c.shielded && c.shieldExpiry > now));
+  }
+
+  async function handleBuyShield() {
+    const terr = await getTerritories();
+    const result = buyShield(player, terr);
+    if (!result) {
+      Alert.alert('코인 부족', `쉴드 구매에 ${SHIELD_COST} 코인이 필요해요.\n현재 코인: ${player.coins}`);
+      return;
+    }
+    await savePlayer(result.updatedPlayer);
+    await saveTerritories(result.updatedTerritories);
+    setPlayer(result.updatedPlayer);
+    setShieldActive(true);
+    Alert.alert('쉴드 활성화!', '모든 영토에 24시간 쉴드가 적용됐어요. 🛡️');
   }
 
   async function saveName() {
@@ -115,6 +133,26 @@ export default function ProfileScreen({ navigation }) {
         <Text style={styles.coinsNote}>영토를 달려서 코인을 모으세요</Text>
       </View>
 
+      {/* Shield Shop */}
+      <View style={styles.shieldCard}>
+        <View style={styles.shieldInfo}>
+          <Text style={styles.shieldTitle}>🛡️ 영토 쉴드</Text>
+          <Text style={styles.shieldDesc}>
+            {shieldActive
+              ? '쉴드 활성화 중 — 영토가 적으로부터 보호됩니다 (24시간)'
+              : `모든 영토를 24시간 동안 적 공격으로부터 보호합니다`}
+          </Text>
+          <Text style={styles.shieldCost}>💰 {SHIELD_COST} 코인</Text>
+        </View>
+        <TouchableOpacity
+          style={[styles.shieldBtn, shieldActive && styles.shieldBtnActive]}
+          onPress={handleBuyShield}
+          disabled={shieldActive}
+        >
+          <Text style={styles.shieldBtnText}>{shieldActive ? '활성 중' : '구매'}</Text>
+        </TouchableOpacity>
+      </View>
+
       {/* Achievements */}
       <SectionHeader title="업적" sub={`${player.achievements.length} / ${ACHIEVEMENTS.length}`} />
       <View style={styles.achGrid}>
@@ -197,6 +235,15 @@ const styles = StyleSheet.create({
   resourceCard: { marginHorizontal: 12, marginBottom: 4, backgroundColor: '#141c14', borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: 'rgba(245,158,11,0.2)' },
   coins: { color: '#f59e0b', fontSize: 18, fontWeight: '700', flex: 1 },
   coinsNote: { color: '#555', fontSize: 11 },
+
+  shieldCard: { marginHorizontal: 12, marginTop: 8, marginBottom: 4, backgroundColor: '#111827', borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: 'rgba(59,130,246,0.3)' },
+  shieldInfo: { flex: 1, gap: 4 },
+  shieldTitle: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  shieldDesc: { color: '#888', fontSize: 12, lineHeight: 17 },
+  shieldCost: { color: '#f59e0b', fontSize: 12, fontWeight: '600', marginTop: 2 },
+  shieldBtn: { backgroundColor: '#3b82f6', borderRadius: 10, paddingHorizontal: 16, paddingVertical: 10 },
+  shieldBtnActive: { backgroundColor: '#1e3a5f' },
+  shieldBtnText: { color: '#fff', fontSize: 14, fontWeight: '700' },
 
   sectionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 20, paddingBottom: 10 },
   sectionTitle: { color: '#fff', fontSize: 16, fontWeight: '600' },

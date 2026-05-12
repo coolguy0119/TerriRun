@@ -16,10 +16,11 @@ import {
   formatDistance, formatPace, formatDuration, formatArea, cellsToArea,
 } from '../utils/geo';
 import { getTerritories, saveTerritories, getPlayer, savePlayer, saveRun, getEnemies, saveEnemies } from '../utils/storage';
-import { processRunCompletion, calcXPGain } from '../game/GameEngine';
+import { processRunCompletion, calcXPGain, isShielded, buyShield, SHIELD_COST } from '../game/GameEngine';
 import RunResultModal from '../components/RunResultModal';
 
 const PLAYER_COLOR     = '#22d97a';
+const SHIELD_COLOR     = '#3b82f6';
 const ENEMY_COLOR      = '#ef4444';
 const ATTACKING_COLOR  = '#f97316';
 const MAP_DARK_STYLE   = require('../assets/mapStyle.json');
@@ -182,7 +183,9 @@ export default function RunScreen({ navigation }) {
           crossedKeys.forEach((key) => {
             const [row, col] = key.split('_').map(Number);
 
-            if (newEnemy[key]) {
+            if (newTerr[key] && isShielded(newTerr[key])) {
+              // Shielded — skip all interactions
+            } else if (newEnemy[key]) {
               // Attack enemy territory
               newEnemy[key] = { ...newEnemy[key], health: newEnemy[key].health - 1 };
               newAttacking.add(key);
@@ -297,15 +300,18 @@ export default function RunScreen({ navigation }) {
   }
 
   // ── Render visible territory polygons ─────────────────────────
-  const terrPolygons = Object.values(territories).map((cell) => (
-    <Polygon
-      key={`t_${cell.row}_${cell.col}`}
-      coordinates={cellToPolygon(cell.row, cell.col)}
-      fillColor="rgba(34, 217, 122, 0.28)"
-      strokeColor="rgba(34, 217, 122, 0.8)"
-      strokeWidth={1}
-    />
-  ));
+  const terrPolygons = Object.values(territories).map((cell) => {
+    const shielded = isShielded(cell);
+    return (
+      <Polygon
+        key={`t_${cell.row}_${cell.col}`}
+        coordinates={cellToPolygon(cell.row, cell.col)}
+        fillColor={shielded ? 'rgba(59, 130, 246, 0.35)' : 'rgba(34, 217, 122, 0.28)'}
+        strokeColor={shielded ? SHIELD_COLOR : 'rgba(34, 217, 122, 0.8)'}
+        strokeWidth={shielded ? 2 : 1}
+      />
+    );
+  });
 
   const enemyPolygons = Object.values(enemies).map((cell) => {
     const isAttacking = attackingCells.has(cell.key);
@@ -441,6 +447,19 @@ export default function RunScreen({ navigation }) {
         <RunResultModal
           data={resultModal}
           onClose={() => { setResultModal(null); navigation.navigate('Home'); }}
+          onShield={async () => {
+            const terr = await getTerritories();
+            const player = await getPlayer();
+            const result = buyShield(player, terr);
+            if (!result) {
+              Alert.alert('코인 부족', `쉴드 구매에 ${SHIELD_COST} 코인이 필요해요.\n현재 코인: ${player.coins}`);
+              return;
+            }
+            await savePlayer(result.updatedPlayer);
+            await saveTerritories(result.updatedTerritories);
+            setTerritories(result.updatedTerritories);
+            Alert.alert('쉴드 활성화!', '모든 영토에 24시간 쉴드가 적용됐어요. 🛡️');
+          }}
         />
       )}
     </View>

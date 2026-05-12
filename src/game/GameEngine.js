@@ -200,6 +200,29 @@ export const DAILY_MISSIONS = [
   },
 ];
 
+// ── Shield System ─────────────────────────────────────────────
+export const SHIELD_COST = 100;
+export const SHIELD_DURATION_MS = 24 * 60 * 60 * 1000;
+
+export function isShielded(cell) {
+  return !!(cell?.shielded && cell.shieldExpiry > Date.now());
+}
+
+export function buyShield(player, territories) {
+  if (player.coins < SHIELD_COST) return null;
+  const expiry = Date.now() + SHIELD_DURATION_MS;
+  const updated = {};
+  for (const [key, cell] of Object.entries(territories)) {
+    updated[key] = cell.owner === 'player'
+      ? { ...cell, shielded: true, shieldExpiry: expiry }
+      : cell;
+  }
+  return {
+    updatedPlayer: { ...player, coins: player.coins - SHIELD_COST },
+    updatedTerritories: updated,
+  };
+}
+
 // ── Run Completion ─────────────────────────────────────────────
 export function processRunCompletion(player, runStats) {
   const { distanceMeters, newCells, enemyCells, paceSecPerKm } = runStats;
