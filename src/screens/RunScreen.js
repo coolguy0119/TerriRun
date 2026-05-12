@@ -170,8 +170,9 @@ export default function RunScreen({ navigation }) {
       const crossedKeys = getCellsAlongPath(newPoints.slice(-3));
 
       setTerritories((prevTerr) => {
+        const newTerr = { ...prevTerr };
+
         setEnemies((prevEnemy) => {
-          const newTerr = { ...prevTerr };
           const newEnemy = { ...prevEnemy };
           let newCellCount = 0;
           let enemyCellCount = 0;
@@ -212,6 +213,7 @@ export default function RunScreen({ navigation }) {
           }
           return newEnemy;
         });
+
         return newTerr;
       });
 
