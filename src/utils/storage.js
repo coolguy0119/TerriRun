@@ -24,6 +24,7 @@ const DEFAULT_PLAYER = {
   bestPace: 9999,
   achievements: [],
   completedMissions: [],
+  inventory: {},
 };
 
 export async function getPlayer() {

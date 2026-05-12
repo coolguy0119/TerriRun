@@ -16,7 +16,7 @@ import {
   formatDistance, formatPace, formatDuration, formatArea, cellsToArea,
 } from '../utils/geo';
 import { getTerritories, saveTerritories, getPlayer, savePlayer, saveRun, getEnemies, saveEnemies } from '../utils/storage';
-import { processRunCompletion, calcXPGain, isShielded, buyShield, SHIELD_COST } from '../game/GameEngine';
+import { processRunCompletion, calcXPGain, isShielded, buyShield, SHIELD_COST, ITEMS } from '../game/GameEngine';
 import RunResultModal from '../components/RunResultModal';
 
 const PLAYER_COLOR     = '#22d97a';
@@ -47,6 +47,9 @@ export default function RunScreen({ navigation }) {
   // UI state
   const [resultModal, setResultModal] = useState(null);
   const [notification, setNotification] = useState(null);
+  const [player, setPlayer] = useState(null);
+  const [showItemPicker, setShowItemPicker] = useState(false);
+  const [activeItems, setActiveItems] = useState(new Set());
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
   const watchRef = useRef(null);
@@ -67,12 +70,14 @@ export default function RunScreen({ navigation }) {
   }, []);
 
   async function loadTerritories() {
-    const [savedTerr, savedEnemy, location] = await Promise.all([
+    const [savedTerr, savedEnemy, location, savedPlayer] = await Promise.all([
       getTerritories(),
       getEnemies(),
       Location.getLastKnownPositionAsync(),
+      getPlayer(),
     ]);
     setTerritories(savedTerr);
+    setPlayer(savedPlayer);
 
     // Generate or restore enemies
     if (savedEnemy && Object.keys(savedEnemy).length > 0) {
@@ -118,6 +123,19 @@ export default function RunScreen({ navigation }) {
   async function startRun() {
     const ok = await requestPermission();
     if (!ok) return;
+
+    // Apply bomb item: set all nearby enemy health to 1
+    if (activeItems.has('bomb')) {
+      setEnemies((prev) => {
+        const updated = {};
+        for (const [k, c] of Object.entries(prev)) {
+          updated[k] = { ...c, health: 1 };
+        }
+        saveEnemies(updated);
+        return updated;
+      });
+      showNotif('💣 폭탄 발동! 적 체력 1로 감소');
+    }
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setIsRunning(true);
@@ -167,8 +185,14 @@ export default function RunScreen({ navigation }) {
       }
       lastPosRef.current = { latitude, longitude };
 
-      // Calculate cells crossed
-      const crossedKeys = getCellsAlongPath(newPoints.slice(-3));
+      // Calculate cells crossed (invasion item: add adjacent cells)
+      const baseCrossed = getCellsAlongPath(newPoints.slice(-3));
+      const crossedKeys = activeItems.has('invasion')
+        ? new Set([...baseCrossed, ...[...baseCrossed].flatMap((key) => {
+            const [r, c] = key.split('_').map(Number);
+            return [`${r+1}_${c}`, `${r-1}_${c}`, `${r}_${c+1}`, `${r}_${c-1}`];
+          })])
+        : baseCrossed;
 
       setTerritories((prevTerr) => {
         const newTerr = { ...prevTerr };
@@ -187,7 +211,9 @@ export default function RunScreen({ navigation }) {
               // Shielded — skip all interactions
             } else if (newEnemy[key]) {
               // Attack enemy territory
-              newEnemy[key] = { ...newEnemy[key], health: newEnemy[key].health - 1 };
+              const damage = activeItems.has('power_strike') ? 2 : 1;
+              const newHealth = activeItems.has('blitz') ? 0 : newEnemy[key].health - damage;
+              newEnemy[key] = { ...newEnemy[key], health: newHealth };
               newAttacking.add(key);
               if (newEnemy[key].health <= 0) {
                 delete newEnemy[key];
@@ -417,12 +443,39 @@ export default function RunScreen({ navigation }) {
 
           {/* Main button */}
           {!isRunning ? (
-            <TouchableOpacity style={styles.startBtn} onPress={startRun} activeOpacity={0.85}>
-              <LinearGradient colors={['#22d97a', '#16a057']} style={styles.startBtnGrad}>
-                <Ionicons name="play" size={32} color="#000" />
-                <Text style={styles.startBtnText}>달리기 시작</Text>
-              </LinearGradient>
-            </TouchableOpacity>
+            <View style={styles.startGroup}>
+              {/* Item quick-select */}
+              {player && Object.values(player.inventory || {}).some((v) => v > 0) && (
+                <View style={styles.itemRow}>
+                  {ITEMS.filter((it) => (player.inventory?.[it.id] || 0) > 0).map((it) => {
+                    const on = activeItems.has(it.id);
+                    return (
+                      <TouchableOpacity
+                        key={it.id}
+                        style={[styles.itemChip, on && styles.itemChipOn]}
+                        onPress={() => {
+                          setActiveItems((prev) => {
+                            const next = new Set(prev);
+                            on ? next.delete(it.id) : next.add(it.id);
+                            return next;
+                          });
+                        }}
+                      >
+                        <Text style={styles.itemChipEmoji}>{it.emoji}</Text>
+                        <Text style={[styles.itemChipLabel, on && styles.itemChipLabelOn]}>{it.name}</Text>
+                        <Text style={styles.itemChipCount}>{player.inventory[it.id]}</Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              )}
+              <TouchableOpacity style={styles.startBtn} onPress={startRun} activeOpacity={0.85}>
+                <LinearGradient colors={['#22d97a', '#16a057']} style={styles.startBtnGrad}>
+                  <Ionicons name="play" size={32} color="#000" />
+                  <Text style={styles.startBtnText}>달리기 시작</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
           ) : (
             <View style={styles.runBtns}>
               <TouchableOpacity style={styles.pauseBtn} onPress={togglePause}>
@@ -526,6 +579,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
+  startGroup: { flex: 1, gap: 8 },
+  itemRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, justifyContent: 'center' },
+  itemChip: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  itemChipOn: { backgroundColor: 'rgba(239,68,68,0.2)', borderColor: '#ef4444' },
+  itemChipEmoji: { fontSize: 14 },
+  itemChipLabel: { color: '#888', fontSize: 11, fontWeight: '600' },
+  itemChipLabelOn: { color: '#ef4444' },
+  itemChipCount: { color: '#555', fontSize: 10, marginLeft: 2 },
   startBtn: { flex: 1, borderRadius: 28, overflow: 'hidden' },
   startBtnGrad: {
     flexDirection: 'row',

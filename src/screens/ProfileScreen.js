@@ -9,6 +9,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import { getPlayer, savePlayer, getTerritories, saveTerritories, checkAndResetDaily } from '../utils/storage';
 import { calcLevel, xpProgress, getLeague, ACHIEVEMENTS, DAILY_MISSIONS, SHIELD_COST, SHIELD_DURATION_MS, buyShield } from '../game/GameEngine';
+import ItemShopModal from '../components/ItemShopModal';
 import { formatDistance, formatArea, cellsToArea } from '../utils/geo';
 
 const LEADERBOARD = [
@@ -25,6 +26,7 @@ export default function ProfileScreen({ navigation }) {
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState('');
   const [shieldActive, setShieldActive] = useState(false);
+  const [showItemShop, setShowItemShop] = useState(false);
 
   useFocusEffect(useCallback(() => { loadPlayer(); }, []));
 
@@ -133,6 +135,19 @@ export default function ProfileScreen({ navigation }) {
         <Text style={styles.coinsNote}>영토를 달려서 코인을 모으세요</Text>
       </View>
 
+      {/* Item Shop */}
+      <TouchableOpacity style={styles.itemShopBtn} onPress={() => setShowItemShop(true)}>
+        <Text style={styles.itemShopBtnText}>⚔️ 아이템 상점 열기</Text>
+        <Text style={styles.itemShopSub}>영토 탈환 아이템 구매</Text>
+      </TouchableOpacity>
+
+      <ItemShopModal
+        visible={showItemShop}
+        player={player}
+        onClose={() => setShowItemShop(false)}
+        onPlayerUpdate={(updated) => setPlayer(updated)}
+      />
+
       {/* Shield Shop */}
       <View style={styles.shieldCard}>
         <View style={styles.shieldInfo}>
@@ -236,6 +251,9 @@ const styles = StyleSheet.create({
   coins: { color: '#f59e0b', fontSize: 18, fontWeight: '700', flex: 1 },
   coinsNote: { color: '#555', fontSize: 11 },
 
+  itemShopBtn: { marginHorizontal: 12, marginTop: 8, backgroundColor: '#1a1a2e', borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(239,68,68,0.3)', alignItems: 'center', gap: 4 },
+  itemShopBtnText: { color: '#ef4444', fontSize: 16, fontWeight: '700' },
+  itemShopSub: { color: '#555', fontSize: 12 },
   shieldCard: { marginHorizontal: 12, marginTop: 8, marginBottom: 4, backgroundColor: '#111827', borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: 'rgba(59,130,246,0.3)' },
   shieldInfo: { flex: 1, gap: 4 },
   shieldTitle: { color: '#fff', fontSize: 15, fontWeight: '700' },
