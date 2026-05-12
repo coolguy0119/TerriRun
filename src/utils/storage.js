@@ -25,6 +25,9 @@ const DEFAULT_PLAYER = {
   achievements: [],
   completedMissions: [],
   inventory: {},
+  alliance: null,
+  lastLat: null,
+  lastLng: null,
 };
 
 export async function getPlayer() {

@@ -9,6 +9,8 @@ import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from './src/screens/HomeScreen';
 import RunScreen from './src/screens/RunScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
+import AllianceScreen from './src/screens/AllianceScreen';
+import BattleScreen from './src/screens/BattleScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -31,9 +33,10 @@ function TabNavigator() {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           const icons = {
-            Home: focused ? 'home' : 'home-outline',
-            Run: focused ? 'play-circle' : 'play-circle-outline',
-            Profile: focused ? 'person' : 'person-outline',
+            Home:     focused ? 'home'         : 'home-outline',
+            Run:      focused ? 'play-circle'  : 'play-circle-outline',
+            Alliance: focused ? 'shield'       : 'shield-outline',
+            Profile:  focused ? 'person'       : 'person-outline',
           };
           return <Ionicons name={icons[route.name]} size={route.name === 'Run' ? size + 6 : size} color={color} />;
         },
@@ -50,9 +53,10 @@ function TabNavigator() {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarLabel: '홈' }} />
-      <Tab.Screen name="Run"  component={RunScreen}  options={{ tabBarLabel: '달리기' }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarLabel: '프로필' }} />
+      <Tab.Screen name="Home"     component={HomeScreen}     options={{ tabBarLabel: '홈' }} />
+      <Tab.Screen name="Run"      component={RunScreen}      options={{ tabBarLabel: '달리기' }} />
+      <Tab.Screen name="Alliance" component={AllianceScreen} options={{ tabBarLabel: '연맹' }} />
+      <Tab.Screen name="Profile"  component={ProfileScreen}  options={{ tabBarLabel: '프로필' }} />
     </Tab.Navigator>
   );
 }
@@ -63,7 +67,8 @@ export default function App() {
       <NavigationContainer theme={DARK_THEME}>
         <StatusBar style="light" />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Main" component={TabNavigator} />
+          <Stack.Screen name="Main"   component={TabNavigator} />
+          <Stack.Screen name="Battle" component={BattleScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
