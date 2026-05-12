@@ -1,4 +1,4 @@
-# 🏃 TerriRun — 달리면서 영토를 정복하라!
+# 🏃 TerraRun — 달리면서 영토를 정복하라!
 
 실제 GPS로 달리면서 지도 위의 영토를 캡처하는 iOS 게임 앱
 
@@ -42,7 +42,7 @@
 
 ```bash
 git clone <repo>
-cd TerriRun
+cd TerraRun
 npm install
 npx expo start
 ```
@@ -76,7 +76,7 @@ eas build --platform ios --profile production
 
 ### app.json 수정 필요
 ```json
-"bundleIdentifier": "com.여러분이름.terrirun"
+"bundleIdentifier": "com.여러분이름.terrarun"
 ```
 
 ---
@@ -84,7 +84,7 @@ eas build --platform ios --profile production
 ## 📁 프로젝트 구조
 
 ```
-TerriRun/
+TerraRun/
 ├── App.js                          # 네비게이션 (탭 + 스택)
 ├── app.json                        # Expo / iOS 권한 설정
 ├── package.json
