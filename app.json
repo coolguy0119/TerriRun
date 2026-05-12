@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "TerriRun",
+    "slug": "terrirun",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0d1117"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.yourname.terrirun",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "달리는 경로를 추적하여 영토를 캡처하기 위해 위치 정보가 필요합니다.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "백그라운드에서도 달리기 경로를 추적하기 위해 위치 정보가 필요합니다.",
+        "UIBackgroundModes": ["location", "fetch"]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/icon.png",
+        "backgroundColor": "#0d1117"
+      },
+      "package": "com.yourname.terrirun",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "백그라운드에서 달리기 경로를 추적하기 위해 위치 권한이 필요합니다."
+        }
+      ]
+    ]
+  }
+}
