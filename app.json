@@ -15,7 +15,10 @@
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "달리는 경로를 추적하여 영토를 캡처하기 위해 위치 정보가 필요합니다.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "백그라운드에서도 달리기 경로를 추적하기 위해 위치 정보가 필요합니다.",
-        "UIBackgroundModes": ["location", "fetch"]
+        "UIBackgroundModes": [
+          "location",
+          "fetch"
+        ]
       }
     },
     "android": {
@@ -36,7 +39,8 @@
         {
           "locationAlwaysAndWhenInUsePermission": "백그라운드에서 달리기 경로를 추적하기 위해 위치 권한이 필요합니다."
         }
-      ]
+      ],
+      "expo-asset"
     ]
   }
 }

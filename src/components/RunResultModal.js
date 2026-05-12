@@ -8,11 +8,11 @@ import * as Haptics from 'expo-haptics';
 
 import { formatDistance, formatDuration, formatPace } from '../utils/geo';
 
-export default function RunResultModal({ data, onClose }) {
+export default function RunResultModal({ data, onClose, onShield }) {
   const {
     distance, duration, cells, enemyCells,
     xpGain, coinGain, newAchievements, newlyCompleted,
-    leveledUp, newLevel,
+    leveledUp, newLevel, playerCoins,
   } = data;
 
   const slideAnim = useRef(new Animated.Value(300)).current;
@@ -109,6 +109,11 @@ export default function RunResultModal({ data, onClose }) {
 
         {/* CTA */}
         <View style={styles.footer}>
+          {onShield && (
+            <TouchableOpacity style={styles.shieldBtn} onPress={onShield} activeOpacity={0.85}>
+              <Text style={styles.shieldBtnText}>🛡️ 영토 쉴드 구매 (100코인)</Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity style={styles.closeBtn} onPress={onClose} activeOpacity={0.85}>
             <LinearGradient colors={['#22d97a', '#16a057']} style={styles.closeBtnGrad}>
               <Text style={styles.closeBtnText}>확인</Text>
@@ -162,7 +167,9 @@ const styles = StyleSheet.create({
   achName: { color: '#fff', fontSize: 13, fontWeight: '600' },
   achDesc: { color: '#555', fontSize: 11 },
   achXp: { color: '#f59e0b', fontSize: 12, fontWeight: '600', marginLeft: 'auto' },
-  footer: { padding: 16, paddingBottom: 32 },
+  footer: { padding: 16, paddingBottom: 32, gap: 10 },
+  shieldBtn: { backgroundColor: '#1e3a5f', borderRadius: 16, padding: 14, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(59,130,246,0.5)' },
+  shieldBtnText: { color: '#3b82f6', fontSize: 15, fontWeight: '700' },
   closeBtn: { borderRadius: 16, overflow: 'hidden' },
   closeBtnGrad: { padding: 16, alignItems: 'center' },
   closeBtnText: { color: '#000', fontSize: 17, fontWeight: '700' },

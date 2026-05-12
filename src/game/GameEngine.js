@@ -200,6 +200,76 @@ export const DAILY_MISSIONS = [
   },
 ];
 
+// ── Item System ───────────────────────────────────────────────
+export const ITEMS = [
+  {
+    id: 'power_strike',
+    name: '파워 스트라이크',
+    emoji: '⚡',
+    desc: '이번 달리기 동안 적 영토 피해량 2배 (2번 통과로 즉시 점령)',
+    cost: 150,
+  },
+  {
+    id: 'bomb',
+    name: '폭탄',
+    emoji: '💣',
+    desc: '달리기 시작 시 주변 모든 적 영토 체력을 1로 감소',
+    cost: 200,
+  },
+  {
+    id: 'blitz',
+    name: '블리츠',
+    emoji: '🌀',
+    desc: '이번 달리기 동안 적 영토 1번 통과로 즉시 점령',
+    cost: 280,
+  },
+  {
+    id: 'invasion',
+    name: '대침략',
+    emoji: '⚔️',
+    desc: '이번 달리기 동안 이동 경로 좌우 1칸도 자동 점령',
+    cost: 320,
+  },
+  {
+    id: 'spy',
+    name: '정찰대',
+    emoji: '🕵️',
+    desc: '즉시 주변 적 영토 50개 추가 생성 (탈환 기회 확보)',
+    cost: 80,
+  },
+];
+
+export function purchaseItem(player, itemId) {
+  const item = ITEMS.find((i) => i.id === itemId);
+  if (!item || player.coins < item.cost) return null;
+  const inventory = { ...player.inventory };
+  inventory[itemId] = (inventory[itemId] || 0) + 1;
+  return { ...player, coins: player.coins - item.cost, inventory };
+}
+
+// ── Shield System ─────────────────────────────────────────────
+export const SHIELD_COST = 100;
+export const SHIELD_DURATION_MS = 24 * 60 * 60 * 1000;
+
+export function isShielded(cell) {
+  return !!(cell?.shielded && cell.shieldExpiry > Date.now());
+}
+
+export function buyShield(player, territories) {
+  if (player.coins < SHIELD_COST) return null;
+  const expiry = Date.now() + SHIELD_DURATION_MS;
+  const updated = {};
+  for (const [key, cell] of Object.entries(territories)) {
+    updated[key] = cell.owner === 'player'
+      ? { ...cell, shielded: true, shieldExpiry: expiry }
+      : cell;
+  }
+  return {
+    updatedPlayer: { ...player, coins: player.coins - SHIELD_COST },
+    updatedTerritories: updated,
+  };
+}
+
 // ── Run Completion ─────────────────────────────────────────────
 export function processRunCompletion(player, runStats) {
   const { distanceMeters, newCells, enemyCells, paceSecPerKm } = runStats;
