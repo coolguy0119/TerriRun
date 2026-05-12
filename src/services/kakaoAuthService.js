@@ -11,7 +11,7 @@ WebBrowser.maybeCompleteAuthSession();
 // 5. Redirect URI 등록:
 //    - 개발(Expo Go): makeRedirectUri()가 반환하는 주소 (콘솔 로그 확인)
 //    - 배포(EAS Build): terrarun://auth/kakao
-export const KAKAO_REST_API_KEY = ''; // 예: 'abc1234def56789...'
+export const KAKAO_REST_API_KEY = '1ad4867861562a94fce7f566e012db0f';
 
 const KAKAO_AUTH_URL  = 'https://kauth.kakao.com/oauth/authorize';
 const KAKAO_TOKEN_URL = 'https://kauth.kakao.com/oauth/token';
