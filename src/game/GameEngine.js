@@ -16,7 +16,7 @@ export function calcLevel(xp) {
 
 export function xpProgress(xp) {
   const level = calcLevel(xp);
-  if (level >= MAX_LEVEL) return { current: xp, needed: 0, percent: 1 };
+  if (level >= MAX_LEVEL) return { current: xp - XP_TABLE[MAX_LEVEL - 1], needed: 0, percent: 1 };
   const currentThreshold = XP_TABLE[level - 1];
   const nextThreshold = XP_TABLE[level];
   const current = xp - currentThreshold;
