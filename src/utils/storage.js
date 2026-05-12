@@ -5,6 +5,7 @@ const KEYS = {
   TERRITORIES: 'territories',
   ENEMIES: 'enemy_territories',
   RUN_HISTORY: 'run_history',
+  EVENT_ZONES: 'event_zones',
 };
 
 // ── Player Data ────────────────────────────────────────────────
@@ -85,6 +86,19 @@ export async function getRunHistory() {
     const raw = await AsyncStorage.getItem(KEYS.RUN_HISTORY);
     return raw ? JSON.parse(raw) : [];
   } catch { return []; }
+}
+
+// ── Event Zones ────────────────────────────────────────────────
+export async function getEventZones() {
+  try {
+    const raw = await AsyncStorage.getItem(KEYS.EVENT_ZONES);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
+export async function saveEventZones(data) {
+  try { await AsyncStorage.setItem(KEYS.EVENT_ZONES, JSON.stringify(data)); }
+  catch (e) { console.error('saveEventZones', e); }
 }
 
 // ── Daily Reset ────────────────────────────────────────────────

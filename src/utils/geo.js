@@ -123,3 +123,25 @@ export function formatArea(m2) {
   if (m2 < 10000) return `${Math.round(m2)}m²`;
   return `${(m2 / 10000).toFixed(1)}ha`;
 }
+
+// Generate event zone cells (special landmark areas) around a location
+export function generateEventZones(lat, lng, count = 6) {
+  const typeIds = ['park', 'landmark', 'fountain', 'market', 'park', 'landmark'];
+  const { row: baseRow, col: baseCol } = latLngToCell(lat, lng);
+  const zones = [];
+  const seen = new Set();
+  let attempts = 0;
+  while (zones.length < count && attempts < 200) {
+    attempts++;
+    const offsetRow = Math.floor((Math.random() - 0.5) * 80);
+    const offsetCol = Math.floor((Math.random() - 0.5) * 80);
+    const row = baseRow + offsetRow;
+    const col = baseCol + offsetCol;
+    const key = `${row}_${col}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      zones.push({ key, row, col, type: typeIds[zones.length % typeIds.length], captured: false });
+    }
+  }
+  return zones;
+}

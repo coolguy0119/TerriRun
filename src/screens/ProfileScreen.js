@@ -7,36 +7,88 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 
-import { getPlayer, savePlayer, getTerritories, saveTerritories, checkAndResetDaily } from '../utils/storage';
-import { calcLevel, xpProgress, getLeague, ACHIEVEMENTS, DAILY_MISSIONS, SHIELD_COST, SHIELD_DURATION_MS, buyShield } from '../game/GameEngine';
+import {
+  getPlayer, savePlayer, getTerritories, saveTerritories,
+  checkAndResetDaily, getRunHistory,
+} from '../utils/storage';
+import {
+  calcLevel, xpProgress, getLeague, ACHIEVEMENTS, DAILY_MISSIONS,
+  SHIELD_COST, buyShield, UPGRADE_COSTS, MAX_DEFENSE,
+  upgradeTerritories, getDefenseLabel,
+} from '../game/GameEngine';
 import ItemShopModal from '../components/ItemShopModal';
 import { formatDistance, formatArea, cellsToArea } from '../utils/geo';
 
 const LEADERBOARD = [
-  { name: '김서울', cells: 847, league: '💠' },
+  { name: '김서울',   cells: 847, league: '💠' },
   { name: '박달리기', cells: 412, league: '💎' },
-  { name: '이정복', cells: 298, league: '💎' },
-  { name: '최영토', cells: 201, league: '🥇' },
+  { name: '이정복',   cells: 298, league: '💎' },
+  { name: '최영토',   cells: 201, league: '🥇' },
   { name: '정스피드', cells: 175, league: '🥇' },
 ];
 
+const DAY_LABELS = ['일', '월', '화', '수', '목', '금', '토'];
+
+function buildWeeklyStats(history) {
+  const days = Array(7).fill(null).map((_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    return { date: d.toDateString(), distance: 0, label: DAY_LABELS[d.getDay()], isToday: i === 6 };
+  });
+  history.forEach((run) => {
+    const runDate = new Date(run.date).toDateString();
+    const day = days.find((d) => d.date === runDate);
+    if (day) day.distance += run.distance;
+  });
+  return days;
+}
+
+function WeeklyChart({ data }) {
+  const maxDist = Math.max(...data.map((d) => d.distance), 1000);
+  return (
+    <View style={chartStyles.container}>
+      {data.map((day, i) => {
+        const pct = day.distance > 0 ? Math.max(day.distance / maxDist, 0.04) : 0;
+        return (
+          <View key={i} style={chartStyles.barCol}>
+            {day.distance > 0 && (
+              <Text style={chartStyles.distLabel}>
+                {day.distance >= 1000 ? `${(day.distance / 1000).toFixed(1)}k` : `${Math.round(day.distance)}m`}
+              </Text>
+            )}
+            <View style={chartStyles.barTrack}>
+              <View style={[chartStyles.barFill, { height: `${Math.round(pct * 100)}%` }, day.isToday && chartStyles.barToday]} />
+            </View>
+            <Text style={[chartStyles.dayLabel, day.isToday && chartStyles.dayToday]}>{day.label}</Text>
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
 export default function ProfileScreen({ navigation }) {
   const insets = useSafeAreaInsets();
-  const [player, setPlayer] = useState(null);
+  const [player, setPlayer]           = useState(null);
   const [editingName, setEditingName] = useState(false);
-  const [nameInput, setNameInput] = useState('');
+  const [nameInput, setNameInput]     = useState('');
   const [shieldActive, setShieldActive] = useState(false);
   const [showItemShop, setShowItemShop] = useState(false);
+  const [territories, setTerritories] = useState({});
+  const [history, setHistory]         = useState([]);
 
-  useFocusEffect(useCallback(() => { loadPlayer(); }, []));
+  useFocusEffect(useCallback(() => { loadData(); }, []));
 
-  async function loadPlayer() {
+  async function loadData() {
     let p = await getPlayer();
     p = checkAndResetDaily(p);
     setPlayer(p);
     const terr = await getTerritories();
+    setTerritories(terr);
     const now = Date.now();
     setShieldActive(Object.values(terr).some((c) => c.shielded && c.shieldExpiry > now));
+    const h = await getRunHistory();
+    setHistory(h);
   }
 
   async function handleBuyShield() {
@@ -49,8 +101,43 @@ export default function ProfileScreen({ navigation }) {
     await savePlayer(result.updatedPlayer);
     await saveTerritories(result.updatedTerritories);
     setPlayer(result.updatedPlayer);
+    setTerritories(result.updatedTerritories);
     setShieldActive(true);
     Alert.alert('쉴드 활성화!', '모든 영토에 24시간 쉴드가 적용됐어요. 🛡️');
+  }
+
+  async function handleUpgrade(targetLevel) {
+    const terr = await getTerritories();
+    const result = upgradeTerritories(player, terr, targetLevel);
+    if (!result) {
+      const eligible = Object.values(terr).filter(
+        (c) => c.owner === 'player' && (c.defense || 1) === targetLevel - 1
+      ).length;
+      if (eligible === 0) {
+        Alert.alert('업그레이드 불가', `Lv.${targetLevel - 1} 영토가 없습니다.`);
+      } else {
+        const needed = UPGRADE_COSTS[targetLevel] * eligible;
+        Alert.alert('코인 부족', `${needed.toLocaleString()} 코인이 필요해요.\n현재: ${player.coins} 코인`);
+      }
+      return;
+    }
+    Alert.alert(
+      '영토 강화',
+      `${result.count}칸을 Lv.${targetLevel}(${getDefenseLabel(targetLevel)})으로 강화합니다.\n비용: ${result.totalCost} 코인`,
+      [
+        { text: '취소', style: 'cancel' },
+        {
+          text: '강화!',
+          onPress: async () => {
+            await savePlayer(result.updatedPlayer);
+            await saveTerritories(result.updatedTerritories);
+            setPlayer(result.updatedPlayer);
+            setTerritories(result.updatedTerritories);
+            Alert.alert('강화 완료! 🏰', `${result.count}칸이 ${getDefenseLabel(targetLevel)}으로 강화됐어요!`);
+          },
+        },
+      ]
+    );
   }
 
   async function saveName() {
@@ -63,11 +150,21 @@ export default function ProfileScreen({ navigation }) {
 
   if (!player) return <View style={styles.container} />;
 
-  const league = getLeague(player.totalCells);
-  const xpProg = xpProgress(player.xp);
-  const totalArea = cellsToArea(player.totalCells);
-  const myLeaderboardEntry = { name: player.name, cells: player.totalCells, league: league.emoji, isMe: true };
-  const board = [...LEADERBOARD, myLeaderboardEntry].sort((a, b) => b.cells - a.cells);
+  const league     = getLeague(player.totalCells);
+  const xpProg     = xpProgress(player.xp);
+  const totalArea  = cellsToArea(player.totalCells);
+  const weeklyData = buildWeeklyStats(history);
+  const myEntry    = { name: player.name, cells: player.totalCells, league: league.emoji, isMe: true };
+  const board      = [...LEADERBOARD, myEntry].sort((a, b) => b.cells - a.cells);
+
+  // Defense level distribution
+  const playerCells = Object.values(territories).filter((c) => c.owner === 'player');
+  const defDist = [1, 2, 3, 4, 5].map((lv) => ({
+    level: lv,
+    count: playerCells.filter((c) => (c.defense || 1) === lv).length,
+    label: getDefenseLabel(lv),
+    cost:  UPGRADE_COSTS[lv + 1],
+  }));
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
@@ -105,7 +202,6 @@ export default function ProfileScreen({ navigation }) {
           <Text style={styles.leagueBadge}>{league.emoji} {league.name} 리그 · Lv.{player.level}</Text>
         </View>
 
-        {/* XP Bar */}
         <View style={styles.xpSection}>
           <View style={styles.xpLabelRow}>
             <Text style={styles.xpLabel}>레벨 {player.level} → {player.level + 1}</Text>
@@ -122,10 +218,19 @@ export default function ProfileScreen({ navigation }) {
 
       {/* Stats Row */}
       <View style={styles.statsRow}>
-        <MiniStat label="총 영토" value={formatArea(totalArea)} color="#22d97a" />
-        <MiniStat label="총 거리" value={formatDistance(player.totalDistance)} color="#3b82f6" />
-        <MiniStat label="달리기" value={`${player.totalRuns}회`} color="#f59e0b" />
-        <MiniStat label="연속" value={`${player.streak}일 🔥`} color="#ef4444" />
+        <MiniStat label="총 영토"  value={formatArea(totalArea)}           color="#22d97a" />
+        <MiniStat label="총 거리"  value={formatDistance(player.totalDistance)} color="#3b82f6" />
+        <MiniStat label="달리기"   value={`${player.totalRuns}회`}         color="#f59e0b" />
+        <MiniStat label="연속"     value={`${player.streak}일 🔥`}         color="#ef4444" />
+      </View>
+
+      {/* Weekly Chart */}
+      <SectionHeader title="📊 이번 주 달리기" />
+      <View style={styles.chartCard}>
+        {history.length === 0
+          ? <Text style={styles.emptyNote}>아직 달리기 기록이 없어요. 첫 달리기를 시작해보세요!</Text>
+          : <WeeklyChart data={weeklyData} />
+        }
       </View>
 
       {/* Coin / Resources */}
@@ -140,7 +245,6 @@ export default function ProfileScreen({ navigation }) {
         <Text style={styles.itemShopBtnText}>⚔️ 아이템 상점 열기</Text>
         <Text style={styles.itemShopSub}>영토 탈환 아이템 구매</Text>
       </TouchableOpacity>
-
       <ItemShopModal
         visible={showItemShop}
         player={player}
@@ -148,14 +252,14 @@ export default function ProfileScreen({ navigation }) {
         onPlayerUpdate={(updated) => setPlayer(updated)}
       />
 
-      {/* Shield Shop */}
+      {/* Shield */}
       <View style={styles.shieldCard}>
         <View style={styles.shieldInfo}>
           <Text style={styles.shieldTitle}>🛡️ 영토 쉴드</Text>
           <Text style={styles.shieldDesc}>
             {shieldActive
-              ? '쉴드 활성화 중 — 영토가 적으로부터 보호됩니다 (24시간)'
-              : `모든 영토를 24시간 동안 적 공격으로부터 보호합니다`}
+              ? '쉴드 활성화 중 — 영토가 보호됩니다 (24시간)'
+              : '모든 영토를 24시간 동안 적 공격으로부터 보호합니다'}
           </Text>
           <Text style={styles.shieldCost}>💰 {SHIELD_COST} 코인</Text>
         </View>
@@ -166,6 +270,41 @@ export default function ProfileScreen({ navigation }) {
         >
           <Text style={styles.shieldBtnText}>{shieldActive ? '활성 중' : '구매'}</Text>
         </TouchableOpacity>
+      </View>
+
+      {/* Territory Upgrade */}
+      <SectionHeader title="🏰 영토 강화" sub={`${playerCells.length}칸 보유`} />
+      <View style={styles.upgradeCard}>
+        <View style={styles.defDistRow}>
+          {defDist.filter((d) => d.count > 0 || d.level === 1).map((d) => (
+            <View key={d.level} style={styles.defItem}>
+              <Text style={styles.defCount}>{d.count}</Text>
+              <Text style={styles.defLabel}>Lv.{d.level}</Text>
+              <Text style={styles.defName}>{d.label}</Text>
+            </View>
+          ))}
+        </View>
+        <View style={styles.upgradeButtons}>
+          {[2, 3, 4, 5].map((lv) => {
+            const eligible = defDist.find((d) => d.level === lv - 1)?.count ?? 0;
+            const totalCost = (UPGRADE_COSTS[lv] ?? 0) * eligible;
+            return (
+              <TouchableOpacity
+                key={lv}
+                style={[styles.upgradeBtn, eligible === 0 && styles.upgradeBtnDisabled]}
+                onPress={() => handleUpgrade(lv)}
+                disabled={eligible === 0}
+              >
+                <Text style={styles.upgradeBtnTitle}>Lv.{lv - 1}→{lv}</Text>
+                <Text style={styles.upgradeBtnSub}>{getDefenseLabel(lv)}</Text>
+                {eligible > 0 && (
+                  <Text style={styles.upgradeBtnCost}>💰 {totalCost}</Text>
+                )}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+        <Text style={styles.upgradeNote}>방어력이 높을수록 적이 점령하기 어려워집니다</Text>
       </View>
 
       {/* Achievements */}
@@ -222,6 +361,17 @@ function SectionHeader({ title, sub }) {
   );
 }
 
+const chartStyles = StyleSheet.create({
+  container: { flexDirection: 'row', alignItems: 'flex-end', height: 120, gap: 6, paddingHorizontal: 4 },
+  barCol: { flex: 1, alignItems: 'center', height: '100%', justifyContent: 'flex-end', gap: 4 },
+  distLabel: { color: '#22d97a', fontSize: 9, fontWeight: '600' },
+  barTrack: { width: '100%', flex: 1, backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 4, overflow: 'hidden', justifyContent: 'flex-end' },
+  barFill: { width: '100%', backgroundColor: 'rgba(34,217,122,0.45)', borderRadius: 4 },
+  barToday: { backgroundColor: '#22d97a' },
+  dayLabel: { color: '#555', fontSize: 11 },
+  dayToday: { color: '#22d97a', fontWeight: '700' },
+});
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0d1117' },
   header: { padding: 20, paddingBottom: 24 },
@@ -247,6 +397,9 @@ const styles = StyleSheet.create({
   miniVal: { fontSize: 14, fontWeight: '700' },
   miniLabel: { color: '#555', fontSize: 10, marginTop: 2 },
 
+  chartCard: { marginHorizontal: 12, marginBottom: 8, backgroundColor: '#141c14', borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
+  emptyNote: { color: '#444', fontSize: 13, textAlign: 'center', paddingVertical: 20 },
+
   resourceCard: { marginHorizontal: 12, marginBottom: 4, backgroundColor: '#141c14', borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: 'rgba(245,158,11,0.2)' },
   coins: { color: '#f59e0b', fontSize: 18, fontWeight: '700', flex: 1 },
   coinsNote: { color: '#555', fontSize: 11 },
@@ -254,6 +407,7 @@ const styles = StyleSheet.create({
   itemShopBtn: { marginHorizontal: 12, marginTop: 8, backgroundColor: '#1a1a2e', borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(239,68,68,0.3)', alignItems: 'center', gap: 4 },
   itemShopBtnText: { color: '#ef4444', fontSize: 16, fontWeight: '700' },
   itemShopSub: { color: '#555', fontSize: 12 },
+
   shieldCard: { marginHorizontal: 12, marginTop: 8, marginBottom: 4, backgroundColor: '#111827', borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: 'rgba(59,130,246,0.3)' },
   shieldInfo: { flex: 1, gap: 4 },
   shieldTitle: { color: '#fff', fontSize: 15, fontWeight: '700' },
@@ -262,6 +416,20 @@ const styles = StyleSheet.create({
   shieldBtn: { backgroundColor: '#3b82f6', borderRadius: 10, paddingHorizontal: 16, paddingVertical: 10 },
   shieldBtnActive: { backgroundColor: '#1e3a5f' },
   shieldBtnText: { color: '#fff', fontSize: 14, fontWeight: '700' },
+
+  upgradeCard: { marginHorizontal: 12, marginBottom: 4, backgroundColor: '#141c14', borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(245,158,11,0.2)', gap: 12 },
+  defDistRow: { flexDirection: 'row', gap: 8 },
+  defItem: { flex: 1, alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: 8 },
+  defCount: { color: '#fff', fontSize: 18, fontWeight: '700' },
+  defLabel: { color: '#f59e0b', fontSize: 11, fontWeight: '600' },
+  defName: { color: '#555', fontSize: 9, marginTop: 2 },
+  upgradeButtons: { flexDirection: 'row', gap: 6 },
+  upgradeBtn: { flex: 1, backgroundColor: 'rgba(245,158,11,0.12)', borderRadius: 10, padding: 10, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(245,158,11,0.3)', gap: 2 },
+  upgradeBtnDisabled: { opacity: 0.35 },
+  upgradeBtnTitle: { color: '#f59e0b', fontSize: 12, fontWeight: '700' },
+  upgradeBtnSub: { color: '#888', fontSize: 10 },
+  upgradeBtnCost: { color: '#22d97a', fontSize: 10, fontWeight: '600' },
+  upgradeNote: { color: '#444', fontSize: 11, textAlign: 'center' },
 
   sectionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 20, paddingBottom: 10 },
   sectionTitle: { color: '#fff', fontSize: 16, fontWeight: '600' },

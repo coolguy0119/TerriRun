@@ -270,12 +270,48 @@ export function buyShield(player, territories) {
   };
 }
 
+// ── Territory Upgrade ─────────────────────────────────────────
+export const UPGRADE_COSTS = { 2: 50, 3: 150, 4: 300, 5: 600 };
+export const MAX_DEFENSE = 5;
+
+export function getDefenseLabel(level) {
+  return ['', '기본', '강화', '방어', '요새', '난공불락'][level] ?? '기본';
+}
+
+export function upgradeTerritories(player, territories, targetLevel) {
+  const cost = UPGRADE_COSTS[targetLevel];
+  if (!cost) return null;
+  const eligible = Object.entries(territories).filter(
+    ([, cell]) => cell.owner === 'player' && (cell.defense || 1) === targetLevel - 1
+  );
+  if (!eligible.length) return null;
+  const totalCost = cost * eligible.length;
+  if (player.coins < totalCost) return null;
+  const updatedTerritories = { ...territories };
+  eligible.forEach(([key, cell]) => {
+    updatedTerritories[key] = { ...cell, defense: targetLevel };
+  });
+  return { updatedPlayer: { ...player, coins: player.coins - totalCost }, updatedTerritories, count: eligible.length, totalCost };
+}
+
+// ── Event Zone Types ──────────────────────────────────────────
+export const EVENT_ZONE_TYPES = [
+  { id: 'park',     name: '공원',     emoji: '🌳', bonusXP: 150, bonusCoins: 30 },
+  { id: 'landmark', name: '명소',     emoji: '🏛️', bonusXP: 300, bonusCoins: 60 },
+  { id: 'fountain', name: '광장',     emoji: '⛲', bonusXP: 200, bonusCoins: 40 },
+  { id: 'market',   name: '재래시장', emoji: '🏪', bonusXP: 250, bonusCoins: 50 },
+];
+
+export function getEventZoneReward(typeId) {
+  return EVENT_ZONE_TYPES.find((t) => t.id === typeId) ?? EVENT_ZONE_TYPES[0];
+}
+
 // ── Run Completion ─────────────────────────────────────────────
 export function processRunCompletion(player, runStats) {
-  const { distanceMeters, newCells, enemyCells, paceSecPerKm } = runStats;
+  const { distanceMeters, newCells, enemyCells, paceSecPerKm, bonusXP = 0, bonusCoins = 0 } = runStats;
 
-  const xpGain = calcXPGain(distanceMeters, newCells, enemyCells);
-  const coinGain = calcCoins(newCells, enemyCells);
+  const xpGain = calcXPGain(distanceMeters, newCells, enemyCells) + bonusXP;
+  const coinGain = calcCoins(newCells, enemyCells) + bonusCoins;
 
   const updated = {
     ...player,

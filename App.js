@@ -1,3 +1,4 @@
+import './src/utils/tasks'; // Register background location task
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
