@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "TerriRun",
-    "slug": "terrirun",
+    "name": "TerraRun",
+    "slug": "terrarun",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
@@ -10,7 +10,7 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.yourname.terrirun",
+      "bundleIdentifier": "com.yourname.terrarun",
       "buildNumber": "1",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "달리는 경로를 추적하여 영토를 캡처하기 위해 위치 정보가 필요합니다.",
@@ -26,7 +26,7 @@
         "foregroundImage": "./src/assets/icon.png",
         "backgroundColor": "#0d1117"
       },
-      "package": "com.yourname.terrirun",
+      "package": "com.yourname.terrarun",
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",

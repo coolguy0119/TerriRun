@@ -11,6 +11,7 @@ import RunScreen from './src/screens/RunScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import AllianceScreen from './src/screens/AllianceScreen';
 import BattleScreen from './src/screens/BattleScreen';
+import DeliveryScreen from './src/screens/DeliveryScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -67,8 +68,9 @@ export default function App() {
       <NavigationContainer theme={DARK_THEME}>
         <StatusBar style="light" />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Main"   component={TabNavigator} />
-          <Stack.Screen name="Battle" component={BattleScreen} />
+          <Stack.Screen name="Main"     component={TabNavigator} />
+          <Stack.Screen name="Battle"   component={BattleScreen} />
+          <Stack.Screen name="Delivery" component={DeliveryScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
