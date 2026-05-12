@@ -28,24 +28,38 @@ export async function signInWithGoogle() {
 }
 
 // ── Kakao ──────────────────────────────────────────────────────
-export async function signInWithKakao() {
-  const { makeRedirectUri, useAuthRequest } = await import('expo-auth-session');
-  const redirectUri = makeRedirectUri({ useProxy: true });
-  const authUrl =
-    `https://kauth.kakao.com/oauth/authorize?client_id=227174d875bd067682004a57dcc6599d` +
-    `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code`;
+const KAKAO_JS_KEY = '4faa438965e9eb55fd22ed19765f39d1';
+const KAKAO_REST_KEY = '1ad4867861562a94fce7f566e012db0f';
 
+async function loadKakaoSDK() {
+  if (window.Kakao && window.Kakao.isInitialized()) return;
+  await new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js';
+    s.crossOrigin = 'anonymous';
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+  window.Kakao.init(KAKAO_JS_KEY);
+}
+
+export async function signInWithKakao() {
   if (Platform.OS === 'web') {
-    const popup = window.open(authUrl, '_blank', 'width=500,height=600');
-    return new Promise((resolve, reject) => {
-      const timer = setInterval(() => {
-        if (popup.closed) {
-          clearInterval(timer);
-          reject(new Error('카카오 로그인이 취소되었습니다.'));
-        }
-      }, 500);
-    });
+    // 팝업 대신 전체 페이지 리다이렉트 사용 (팝업 차단 없음)
+    const redirectUri = window.location.origin;
+    window.location.href =
+      `https://kauth.kakao.com/oauth/authorize` +
+      `?client_id=${KAKAO_REST_KEY}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+      `&response_type=code`;
+    return new Promise(() => {}); // 페이지 이동 후 앱이 재시작됨
   } else {
+    const { makeRedirectUri } = await import('expo-auth-session');
+    const redirectUri = makeRedirectUri({ useProxy: true });
+    const authUrl =
+      `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_KEY}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code`;
     const { WebBrowser } = await import('expo-web-browser');
     const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
     if (result.type === 'success') {
@@ -56,24 +70,9 @@ export async function signInWithKakao() {
   }
 }
 
-async function exchangeKakaoCode(code) {
-  const res = await fetch('https://kauth.kakao.com/oauth/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      grant_type: 'authorization_code',
-      client_id: '227174d875bd067682004a57dcc6599d',
-      code,
-    }).toString(),
-  });
-  const tokens = await res.json();
-  const userRes = await fetch('https://kapi.kakao.com/v2/user/me', {
-    headers: { Authorization: `Bearer ${tokens.access_token}` },
-  });
-  const kakaoUser = await userRes.json();
+async function createFirebaseUserFromKakao(kakaoUser) {
   const email = kakaoUser.kakao_account?.email || `kakao_${kakaoUser.id}@terrarun.app`;
   const name = kakaoUser.kakao_account?.profile?.nickname || '카카오 유저';
-
   try {
     const result = await signInWithEmailAndPassword(auth, email, `kakao_${kakaoUser.id}`);
     return result.user;
@@ -82,6 +81,37 @@ async function exchangeKakaoCode(code) {
     await updateProfile(result.user, { displayName: name });
     return result.user;
   }
+}
+
+async function exchangeKakaoCode(code, redirectUri) {
+  const res = await fetch('https://kauth.kakao.com/oauth/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'authorization_code',
+      client_id: KAKAO_REST_KEY,
+      redirect_uri: redirectUri,
+      code,
+    }).toString(),
+  });
+  const tokens = await res.json();
+  const userRes = await fetch('https://kapi.kakao.com/v2/user/me', {
+    headers: { Authorization: `Bearer ${tokens.access_token}` },
+  });
+  const kakaoUser = await userRes.json();
+  return await createFirebaseUserFromKakao(kakaoUser);
+}
+
+// 카카오 리다이렉트 후 URL에서 code 감지하여 로그인 완료
+export async function handleKakaoRedirect() {
+  if (Platform.OS !== 'web') return null;
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  if (!code) return null;
+  // URL 정리 (뒤로가기 시 재실행 방지)
+  window.history.replaceState({}, document.title, window.location.pathname);
+  const redirectUri = window.location.origin;
+  return await exchangeKakaoCode(code, redirectUri);
 }
 
 // ── Naver ──────────────────────────────────────────────────────

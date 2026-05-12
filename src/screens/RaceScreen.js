@@ -9,6 +9,7 @@ import * as Haptics from 'expo-haptics';
 
 import { getPlayer, savePlayer } from '../utils/storage';
 import { calcLevel } from '../game/GameEngine';
+import { C } from '../theme/pokemon';
 
 const RACE_DURATION_MS = 9000; // 9s animation
 const COUNTDOWN_FROM = 3;
@@ -104,7 +105,7 @@ export default function RaceScreen({ navigation, route }) {
   const coinGain = won ? arena.winCoin : arena.loseCoin;
 
   return (
-    <LinearGradient colors={['#0a1a0a', '#0d1117']} style={[styles.container, { paddingTop: insets.top }]}>
+    <LinearGradient colors={['#0a0f2a', '#1a1a2e']} style={[styles.container, { paddingTop: insets.top }]}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerEmoji}>{arena.emoji}</Text>
@@ -156,7 +157,7 @@ export default function RaceScreen({ navigation, route }) {
       {/* Result panel */}
       {phase === 'result' && (
         <View style={styles.resultPanel}>
-          <LinearGradient colors={['#0f2a1a', '#141c14']} style={styles.resultGrad}>
+          <LinearGradient colors={['#0f1a3a', '#16213e']} style={styles.resultGrad}>
             <Text style={styles.resultTitle}>{won ? '🎉 우승!' : '레이스 완료'}</Text>
 
             <View style={styles.placementList}>
@@ -164,7 +165,7 @@ export default function RaceScreen({ navigation, route }) {
                 <View key={racer.id} style={[styles.placementRow, racer.isPlayer && styles.placementHighlight]}>
                   <Text style={[styles.placeLabel, { color: placeColors[i] }]}>{placeLabels[i]}</Text>
                   <Text style={styles.placementEmoji}>{racer.emoji}</Text>
-                  <Text style={[styles.placementName, racer.isPlayer && { color: '#22d97a' }]}>
+                  <Text style={[styles.placementName, racer.isPlayer && { color: C.yellow }]}>
                     {racer.isPlayer ? player.name : racer.name}
                   </Text>
                   <Text style={styles.placementPower}>종합 {racer.overall}</Text>
@@ -173,8 +174,8 @@ export default function RaceScreen({ navigation, route }) {
             </View>
 
             <View style={styles.rewardBox}>
-              <Text style={[styles.rewardXp, { color: won ? '#f59e0b' : '#888' }]}>+{xpGain} XP</Text>
-              <Text style={[styles.rewardCoin, { color: won ? '#22d97a' : '#666' }]}>+{coinGain} 🪙</Text>
+              <Text style={[styles.rewardXp, { color: won ? C.yellow : C.text2 }]}>+{xpGain} XP</Text>
+              <Text style={[styles.rewardCoin, { color: won ? C.green : C.text3 }]}>+{coinGain} 🪙</Text>
             </View>
 
             <View style={styles.resultBtns}>
@@ -206,44 +207,44 @@ const styles = StyleSheet.create({
 
   header: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8 },
   headerEmoji: { fontSize: 22 },
-  headerTitle: { color: '#fff', fontSize: 18, fontWeight: '800' },
+  headerTitle: { color: C.yellow, fontSize: 18, fontWeight: '900', letterSpacing: 1 },
 
   countdownOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center', zIndex: 20 },
-  countdownNum: { fontSize: 96, fontWeight: '900', color: '#22d97a' },
-  countdownSub: { color: '#888', fontSize: 16, marginTop: 8 },
+  countdownNum: { fontSize: 96, fontWeight: '900', color: C.yellow, textShadowColor: 'rgba(255,203,5,0.4)', textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 20 },
+  countdownSub: { color: C.text2, fontSize: 16, marginTop: 8 },
 
   track: { flex: 1, paddingHorizontal: 20, paddingTop: 16, gap: 16 },
 
   lane: { gap: 6 },
   laneInfo: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   laneEmoji: { fontSize: 18, width: 24, textAlign: 'center' },
-  laneName: { flex: 1, color: '#888', fontSize: 13, fontWeight: '600' },
-  laneNamePlayer: { color: '#22d97a' },
-  lanePower: { color: '#555', fontSize: 12 },
-  laneTrack: { height: 36, backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 18, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', overflow: 'hidden', justifyContent: 'center' },
-  finishLine: { position: 'absolute', right: 8, top: 0, bottom: 0, width: 2, backgroundColor: 'rgba(255,255,255,0.2)' },
-  runnerDot: { position: 'absolute', width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(239,68,68,0.3)', alignItems: 'center', justifyContent: 'center' },
+  laneName: { flex: 1, color: C.text2, fontSize: 13, fontWeight: '700' },
+  laneNamePlayer: { color: C.yellow },
+  lanePower: { color: C.text3, fontSize: 12, fontWeight: '700' },
+  laneTrack: { height: 36, backgroundColor: C.card, borderRadius: 18, borderWidth: 2, borderColor: C.border, overflow: 'hidden', justifyContent: 'center' },
+  finishLine: { position: 'absolute', right: 8, top: 0, bottom: 0, width: 2, backgroundColor: 'rgba(255,203,5,0.4)' },
+  runnerDot: { position: 'absolute', width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(204,0,0,0.25)', alignItems: 'center', justifyContent: 'center' },
   runnerEmoji: { fontSize: 18 },
 
-  resultPanel: { position: 'absolute', bottom: 0, left: 0, right: 0, borderTopLeftRadius: 24, borderTopRightRadius: 24, overflow: 'hidden' },
+  resultPanel: { position: 'absolute', bottom: 0, left: 0, right: 0, borderTopLeftRadius: 24, borderTopRightRadius: 24, overflow: 'hidden', borderTopWidth: 2, borderTopColor: C.yellow },
   resultGrad: { padding: 24, gap: 16 },
-  resultTitle: { color: '#fff', fontSize: 22, fontWeight: '900', textAlign: 'center' },
+  resultTitle: { color: C.yellow, fontSize: 22, fontWeight: '900', textAlign: 'center', letterSpacing: 1 },
 
   placementList: { gap: 8 },
-  placementRow: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 10, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.04)' },
-  placementHighlight: { backgroundColor: 'rgba(34,217,122,0.08)', borderWidth: 1, borderColor: 'rgba(34,217,122,0.2)' },
-  placeLabel: { fontSize: 13, fontWeight: '700', width: 48 },
+  placementRow: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 10, borderRadius: 12, backgroundColor: C.bg },
+  placementHighlight: { backgroundColor: 'rgba(255,203,5,0.08)', borderWidth: 2, borderColor: 'rgba(255,203,5,0.3)' },
+  placeLabel: { fontSize: 13, fontWeight: '800', width: 48 },
   placementEmoji: { fontSize: 18 },
-  placementName: { flex: 1, color: '#ccc', fontSize: 13, fontWeight: '600' },
-  placementPower: { color: '#555', fontSize: 11 },
+  placementName: { flex: 1, color: C.text2, fontSize: 13, fontWeight: '700' },
+  placementPower: { color: C.text3, fontSize: 11, fontWeight: '700' },
 
   rewardBox: { flexDirection: 'row', justifyContent: 'center', gap: 24 },
-  rewardXp: { fontSize: 20, fontWeight: '800' },
-  rewardCoin: { fontSize: 20, fontWeight: '800' },
+  rewardXp: { fontSize: 20, fontWeight: '900' },
+  rewardCoin: { fontSize: 20, fontWeight: '900' },
 
   resultBtns: { flexDirection: 'row', gap: 10 },
-  rematchBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#22d97a', borderRadius: 14, paddingVertical: 14 },
-  rematchText: { color: '#000', fontSize: 15, fontWeight: '800' },
-  exitBtn: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 14, paddingVertical: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  exitText: { color: '#ccc', fontSize: 15, fontWeight: '700' },
+  rematchBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: C.yellow, borderRadius: 14, paddingVertical: 14 },
+  rematchText: { color: '#1a1a2e', fontSize: 15, fontWeight: '900' },
+  exitBtn: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: C.card2, borderRadius: 14, paddingVertical: 14, borderWidth: 2, borderColor: C.border },
+  exitText: { color: C.text2, fontSize: 15, fontWeight: '700' },
 });

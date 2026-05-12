@@ -3,7 +3,7 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCAgkRk8sCiMAkA2z4djz5hTAtM1XM4xh8",
+  apiKey: "AIzaSyCAgkRk0sCiMAkA2z4djz5hTAtM1XM4xh8",
   authDomain: "terrarun-x.firebaseapp.com",
   projectId: "terrarun-x",
   storageBucket: "terrarun-x.firebasestorage.app",

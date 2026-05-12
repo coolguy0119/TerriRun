@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -18,7 +18,7 @@ import TrackRunScreen from './src/screens/TrackRunScreen';
 import ArenaScreen from './src/screens/ArenaScreen';
 import RaceScreen from './src/screens/RaceScreen';
 import LoginScreen from './src/screens/LoginScreen';
-import { onAuthChange } from './src/services/authService';
+import { onAuthChange, handleKakaoRedirect } from './src/services/authService';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -27,11 +27,11 @@ const DARK_THEME = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    background: '#0d1117',
-    card: '#0f1a0f',
+    background: '#0A0818',
+    card: '#130D2A',
     text: '#ffffff',
-    border: '#1a2a1a',
-    primary: '#22d97a',
+    border: 'rgba(255,255,255,0.1)',
+    primary: '#A78BFA',
   },
 };
 
@@ -48,16 +48,16 @@ function TabNavigator() {
           };
           return <Ionicons name={icons[route.name]} size={route.name === 'Run' ? size + 6 : size} color={color} />;
         },
-        tabBarActiveTintColor: '#22d97a',
-        tabBarInactiveTintColor: '#445',
+        tabBarActiveTintColor: '#A78BFA',
+        tabBarInactiveTintColor: 'rgba(255,255,255,0.3)',
         tabBarStyle: {
-          backgroundColor: '#0a100a',
-          borderTopColor: '#1a2a1a',
-          borderTopWidth: 0.5,
+          backgroundColor: '#0A0818',
+          borderTopColor: 'rgba(255,255,255,0.08)',
+          borderTopWidth: 1,
           paddingBottom: 4,
-          height: 56,
+          height: 58,
         },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
         headerShown: false,
       })}
     >
@@ -73,6 +73,14 @@ export default function App() {
   const [user, setUser] = useState(undefined); // undefined = loading
 
   useEffect(() => {
+    if (Platform.OS === 'web') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('code')) {
+        handleKakaoRedirect()
+          .then(u => { if (u) setUser(u); })
+          .catch(console.error);
+      }
+    }
     const unsubscribe = onAuthChange((u) => setUser(u));
     return unsubscribe;
   }, []);

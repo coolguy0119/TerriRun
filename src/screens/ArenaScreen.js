@@ -9,6 +9,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import { getPlayer } from '../utils/storage';
 import { ARENAS, calcCharacterStats, getCharacterEmoji } from '../game/GameEngine';
+import { C } from '../theme/pokemon';
 
 function StatBar({ label, value, color }) {
   return (
@@ -37,24 +38,24 @@ export default function ArenaScreen({ navigation }) {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <LinearGradient colors={['#0f1a0f', '#0d1117']} style={styles.header}>
+      <LinearGradient colors={['#0a0f2a', '#1a1a2e']} style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={22} color="#fff" />
+          <Ionicons name="chevron-back" size={22} color={C.yellow} />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>🏟️ 러닝 아레나</Text>
-          <Text style={styles.headerSub}>실제 달리기 기록으로 캐릭터가 강해집니다</Text>
+          <Text style={styles.headerSub}>달리기 기록으로 캐릭터가 강해집니다</Text>
         </View>
       </LinearGradient>
 
       <ScrollView contentContainerStyle={styles.scroll}>
         {/* My Character Card */}
         <View style={styles.charCard}>
-          <LinearGradient colors={['#0f2a1a', '#141c14']} style={styles.charCardInner}>
+          <LinearGradient colors={['#0f1a3a', '#16213e']} style={styles.charCardInner}>
             <Text style={styles.charEmoji}>{charEmoji}</Text>
             <View style={styles.charInfo}>
               <Text style={styles.charName}>{player.name}</Text>
-              <Text style={styles.charLevel}>Lv.{player.level} 러너</Text>
+              <Text style={styles.charLevel}>Lv.{player.level} 트레이너</Text>
             </View>
             <View style={styles.overallBadge}>
               <Text style={styles.overallLabel}>종합</Text>
@@ -130,58 +131,58 @@ export default function ArenaScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0d1117' },
+  container: { flex: 1, backgroundColor: C.bg },
   header: { flexDirection: 'row', alignItems: 'center', padding: 16, paddingBottom: 14, gap: 12 },
   backBtn: { padding: 4 },
   headerCenter: { flex: 1 },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '800' },
-  headerSub: { color: '#22d97a', fontSize: 12, marginTop: 2 },
+  headerTitle: { color: C.yellow, fontSize: 20, fontWeight: '900', letterSpacing: 1 },
+  headerSub: { color: C.text2, fontSize: 12, marginTop: 2 },
 
   scroll: { padding: 16, gap: 12, paddingBottom: 40 },
 
-  charCard: { backgroundColor: '#141c14', borderRadius: 18, borderWidth: 1, borderColor: 'rgba(34,217,122,0.15)', overflow: 'hidden', marginBottom: 4 },
+  charCard: { backgroundColor: C.card, borderRadius: 18, borderWidth: 2, borderColor: C.border, overflow: 'hidden', marginBottom: 4 },
   charCardInner: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 14 },
   charEmoji: { fontSize: 48 },
   charInfo: { flex: 1 },
-  charName: { color: '#fff', fontSize: 18, fontWeight: '800' },
-  charLevel: { color: '#22d97a', fontSize: 13, marginTop: 2 },
-  overallBadge: { alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 12, padding: 10 },
-  overallLabel: { color: '#888', fontSize: 10 },
-  overallVal: { color: '#fff', fontSize: 22, fontWeight: '800' },
+  charName: { color: C.text, fontSize: 18, fontWeight: '900' },
+  charLevel: { color: C.yellow, fontSize: 13, marginTop: 2, fontWeight: '700' },
+  overallBadge: { alignItems: 'center', backgroundColor: 'rgba(255,203,5,0.1)', borderRadius: 12, padding: 10, borderWidth: 2, borderColor: 'rgba(255,203,5,0.3)' },
+  overallLabel: { color: C.text3, fontSize: 10, fontWeight: '700' },
+  overallVal: { color: C.yellow, fontSize: 22, fontWeight: '900' },
 
   statsSection: { padding: 16, gap: 10 },
   statBarRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  statBarLabel: { color: '#888', fontSize: 12, width: 28 },
-  statBarBg: { flex: 1, height: 8, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 4, overflow: 'hidden' },
-  statBarFill: { height: '100%', borderRadius: 4 },
-  statBarVal: { fontSize: 12, fontWeight: '700', width: 28, textAlign: 'right' },
+  statBarLabel: { color: C.text2, fontSize: 12, width: 28, fontWeight: '700' },
+  statBarBg: { flex: 1, height: 10, backgroundColor: C.border, borderRadius: 5, overflow: 'hidden' },
+  statBarFill: { height: '100%', borderRadius: 5 },
+  statBarVal: { fontSize: 12, fontWeight: '800', width: 28, textAlign: 'right' },
 
-  statHint: { borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)', padding: 12 },
-  hintText: { color: '#444', fontSize: 11, textAlign: 'center' },
+  statHint: { borderTopWidth: 2, borderTopColor: C.border, padding: 12 },
+  hintText: { color: C.text3, fontSize: 11, textAlign: 'center' },
 
-  sectionTitle: { color: '#888', fontSize: 12, fontWeight: '700', letterSpacing: 1, marginTop: 4 },
+  sectionTitle: { color: C.yellow, fontSize: 11, fontWeight: '900', letterSpacing: 1.5, textTransform: 'uppercase', marginTop: 4 },
 
-  arenaCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#141c14', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', overflow: 'hidden' },
-  arenaLocked: { opacity: 0.5 },
-  arenaColorBar: { width: 5, alignSelf: 'stretch' },
+  arenaCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.card, borderRadius: 16, borderWidth: 2, borderColor: C.border, overflow: 'hidden' },
+  arenaLocked: { opacity: 0.4 },
+  arenaColorBar: { width: 6, alignSelf: 'stretch' },
   arenaBody: { flex: 1, padding: 14, gap: 10 },
   arenaTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   arenaEmoji: { fontSize: 26, width: 32, textAlign: 'center' },
   arenaInfo: { flex: 1 },
-  arenaName: { color: '#fff', fontSize: 15, fontWeight: '700' },
-  lockedText: { color: '#444' },
-  arenaDesc: { color: '#555', fontSize: 12, marginTop: 2 },
+  arenaName: { color: C.text, fontSize: 15, fontWeight: '800' },
+  lockedText: { color: C.text3 },
+  arenaDesc: { color: C.text3, fontSize: 12, marginTop: 2 },
 
   arenaBottom: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   opponentRow: { flexDirection: 'row', gap: 6 },
-  opponentChip: { alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 },
+  opponentChip: { alignItems: 'center', backgroundColor: C.card2, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4, borderWidth: 1, borderColor: C.border },
   opponentEmoji: { fontSize: 16 },
-  opponentPower: { color: '#ef4444', fontSize: 10, fontWeight: '700' },
+  opponentPower: { color: C.red, fontSize: 10, fontWeight: '800' },
 
   rewardRow: { alignItems: 'flex-end', gap: 4 },
-  rewardText: { color: '#f59e0b', fontSize: 11, fontWeight: '600' },
-  lockText: { color: '#ef4444', fontSize: 11 },
-  warningText: { color: '#f97316', fontSize: 11 },
+  rewardText: { color: C.yellow, fontSize: 11, fontWeight: '700' },
+  lockText: { color: C.red, fontSize: 11, fontWeight: '700' },
+  warningText: { color: C.orange, fontSize: 11, fontWeight: '700' },
 
   chevron: { marginRight: 12 },
 });

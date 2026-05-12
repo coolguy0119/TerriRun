@@ -19,15 +19,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { haversine, formatDistance, formatPace, formatDuration } from '../utils/geo';
 import { getPlayer, savePlayer } from '../utils/storage';
 import { calcLevel } from '../game/GameEngine';
+import { C } from '../theme/pokemon';
 const MAP_DARK = require('../assets/mapStyle.json');
 
 export default function TrackRunScreen({ navigation, route }) {
   if (Platform.OS === 'web') return (
-    <View style={{ flex: 1, backgroundColor: '#0d1117', alignItems: 'center', justifyContent: 'center', padding: 32, gap: 16 }}>
+    <LinearGradient colors={['#0a0f2a', '#1a1a2e']} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 16 }}>
       <Text style={{ fontSize: 64 }}>📱</Text>
-      <Text style={{ color: '#fff', fontSize: 22, fontWeight: '800' }}>모바일 전용 기능</Text>
-      <Text style={{ color: '#555', fontSize: 15, textAlign: 'center' }}>GPS 달리기는 iPhone 앱에서만 사용 가능합니다.</Text>
-    </View>
+      <Text style={{ color: C.yellow, fontSize: 22, fontWeight: '900', letterSpacing: 1 }}>모바일 전용 기능</Text>
+      <Text style={{ color: C.text2, fontSize: 15, textAlign: 'center' }}>GPS 달리기는 모바일 앱에서만 사용 가능합니다.</Text>
+    </LinearGradient>
   );
 
   const { track } = route.params;
@@ -179,7 +180,7 @@ export default function TrackRunScreen({ navigation, route }) {
   // ── Done screen ───────────────────────────────────────────────
   if (phase === 'done') {
     return (
-      <LinearGradient colors={['#0a1a0a', '#0d1117']} style={styles.doneContainer}>
+      <LinearGradient colors={['#0a0f2a', '#1a1a2e']} style={styles.doneContainer}>
         <Text style={styles.doneEmoji}>{track.emoji}</Text>
         <Text style={styles.doneName}>{track.name} 완주!</Text>
         <Text style={styles.doneDesc}>{formatDistance(distance)} 달성</Text>
@@ -187,11 +188,11 @@ export default function TrackRunScreen({ navigation, route }) {
         <View style={styles.doneRewards}>
           <View style={styles.rewardRow}>
             <Text style={styles.rewardLabel}>XP 보너스</Text>
-            <Text style={[styles.rewardVal, { color: '#f59e0b' }]}>+{track.xpBonus} XP</Text>
+            <Text style={[styles.rewardVal, { color: C.yellow }]}>+{track.xpBonus} XP</Text>
           </View>
           <View style={styles.rewardRow}>
             <Text style={styles.rewardLabel}>코인 보너스</Text>
-            <Text style={[styles.rewardVal, { color: '#22d97a' }]}>+{track.coinBonus} 🪙</Text>
+            <Text style={[styles.rewardVal, { color: C.green }]}>+{track.coinBonus} 🪙</Text>
           </View>
           <View style={styles.rewardRow}>
             <Text style={styles.rewardLabel}>소요 시간</Text>
@@ -330,45 +331,45 @@ export default function TrackRunScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0d1117' },
+  container: { flex: 1, backgroundColor: C.bg },
 
   header: { position: 'absolute', top: 0, left: 0, right: 0, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 20, gap: 10, zIndex: 10 },
-  backBtn: { padding: 6, backgroundColor: 'rgba(0,0,0,0.4)', borderRadius: 20 },
+  backBtn: { padding: 6, backgroundColor: 'rgba(26,26,46,0.85)', borderRadius: 20, borderWidth: 2, borderColor: 'rgba(255,203,5,0.3)' },
   headerCenter: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   headerEmoji: { fontSize: 18 },
-  headerName: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  headerName: { color: C.yellow, fontSize: 16, fontWeight: '800' },
 
   hud: { position: 'absolute', bottom: 0, left: 0, right: 0, paddingTop: 40, paddingHorizontal: 20, gap: 16 },
 
   progressSection: { gap: 6 },
   progressLabelRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  progressLabel: { color: '#888', fontSize: 12 },
-  progressBg: { height: 10, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 5, overflow: 'hidden' },
+  progressLabel: { color: C.text2, fontSize: 12, fontWeight: '700' },
+  progressBg: { height: 10, backgroundColor: C.border, borderRadius: 5, overflow: 'hidden' },
   progressFill: { height: '100%', borderRadius: 5 },
-  progressPct: { fontSize: 13, fontWeight: '700', textAlign: 'right' },
+  progressPct: { fontSize: 13, fontWeight: '800', textAlign: 'right' },
 
   statsRow: { flexDirection: 'row', justifyContent: 'space-around' },
   stat: { alignItems: 'center', gap: 2 },
-  statVal: { color: '#fff', fontSize: 22, fontWeight: '700' },
-  statLabel: { color: '#555', fontSize: 11 },
+  statVal: { color: C.text, fontSize: 22, fontWeight: '800' },
+  statLabel: { color: C.text3, fontSize: 11, fontWeight: '700' },
 
   controls: { gap: 10 },
   mainBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, borderRadius: 18, paddingVertical: 16 },
-  mainBtnText: { color: '#000', fontSize: 17, fontWeight: '800' },
+  mainBtnText: { color: '#1a1a2e', fontSize: 17, fontWeight: '900' },
   runningBtns: { flexDirection: 'row', gap: 10 },
-  stopBtn: { width: 54, height: 54, borderRadius: 16, backgroundColor: 'rgba(239,68,68,0.15)', borderWidth: 1, borderColor: 'rgba(239,68,68,0.4)', alignItems: 'center', justifyContent: 'center' },
+  stopBtn: { width: 54, height: 54, borderRadius: 16, backgroundColor: 'rgba(204,0,0,0.15)', borderWidth: 2, borderColor: 'rgba(204,0,0,0.4)', alignItems: 'center', justifyContent: 'center' },
 
-  goalHint: { color: '#444', fontSize: 12, textAlign: 'center' },
+  goalHint: { color: C.text3, fontSize: 12, textAlign: 'center' },
 
   // Done screen
   doneContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 },
   doneEmoji: { fontSize: 72 },
-  doneName: { color: '#fff', fontSize: 26, fontWeight: '800' },
-  doneDesc: { color: '#22d97a', fontSize: 16 },
-  doneRewards: { width: '100%', backgroundColor: '#141c14', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', padding: 20, gap: 14, marginTop: 8 },
+  doneName: { color: C.yellow, fontSize: 26, fontWeight: '900', letterSpacing: 1 },
+  doneDesc: { color: C.text2, fontSize: 16, fontWeight: '700' },
+  doneRewards: { width: '100%', backgroundColor: C.card, borderRadius: 16, borderWidth: 2, borderColor: C.border, padding: 20, gap: 14, marginTop: 8 },
   rewardRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  rewardLabel: { color: '#888', fontSize: 14 },
-  rewardVal: { color: '#fff', fontSize: 16, fontWeight: '700' },
-  doneBtn: { backgroundColor: '#22d97a', borderRadius: 16, paddingHorizontal: 40, paddingVertical: 14, marginTop: 8 },
-  doneBtnText: { color: '#000', fontSize: 16, fontWeight: '800' },
+  rewardLabel: { color: C.text2, fontSize: 14, fontWeight: '700' },
+  rewardVal: { color: C.text, fontSize: 16, fontWeight: '800' },
+  doneBtn: { backgroundColor: C.yellow, borderRadius: 16, paddingHorizontal: 40, paddingVertical: 14, marginTop: 8 },
+  doneBtnText: { color: '#1a1a2e', fontSize: 16, fontWeight: '900' },
 });
