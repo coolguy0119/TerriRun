@@ -118,11 +118,11 @@ export default function HomeScreen({ navigation }) {
       )}
 
       {/* Running Tracks */}
-      <TouchableOpacity style={styles.trackCta} onPress={() => navigation.navigate('TrackList')} activeOpacity={0.85}>
+      <TouchableOpacity style={styles.trackCta} onPress={() => navigation.navigate('Arena')} activeOpacity={0.85}>
         <Text style={styles.trackCtaEmoji}>🏟️</Text>
         <View style={styles.trackCtaInfo}>
-          <Text style={styles.trackCtaTitle}>러닝 트랙</Text>
-          <Text style={styles.trackCtaSub}>레벨별 거리 도전 — 완주 시 보너스 XP & 코인</Text>
+          <Text style={styles.trackCtaTitle}>러닝 아레나</Text>
+          <Text style={styles.trackCtaSub}>달리기 기록으로 캐릭터를 강화해 가상 경주</Text>
         </View>
         <Ionicons name="chevron-forward" size={18} color="#555" />
       </TouchableOpacity>

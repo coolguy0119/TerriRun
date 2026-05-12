@@ -14,6 +14,8 @@ import BattleScreen from './src/screens/BattleScreen';
 import DeliveryScreen from './src/screens/DeliveryScreen';
 import TrackListScreen from './src/screens/TrackListScreen';
 import TrackRunScreen from './src/screens/TrackRunScreen';
+import ArenaScreen from './src/screens/ArenaScreen';
+import RaceScreen from './src/screens/RaceScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -75,6 +77,8 @@ export default function App() {
           <Stack.Screen name="Delivery"  component={DeliveryScreen} />
           <Stack.Screen name="TrackList" component={TrackListScreen} />
           <Stack.Screen name="TrackRun"  component={TrackRunScreen} />
+          <Stack.Screen name="Arena"     component={ArenaScreen} />
+          <Stack.Screen name="Race"      component={RaceScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

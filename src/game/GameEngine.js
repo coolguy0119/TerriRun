@@ -200,73 +200,118 @@ export const DAILY_MISSIONS = [
   },
 ];
 
-// ── Running Tracks ─────────────────────────────────────────────
-export const TRACKS = [
+// ── Arena System ───────────────────────────────────────────────
+// Character emoji by level bracket
+export function getCharacterEmoji(level) {
+  if (level >= 17) return '👑';
+  if (level >= 12) return '🔥';
+  if (level >= 8)  return '⚡';
+  if (level >= 5)  return '🏃';
+  if (level >= 3)  return '🚶';
+  return '🐣';
+}
+
+// Derive character combat stats from real running history
+export function calcCharacterStats(player) {
+  // Speed: best pace in sec/km. 240=elite(100), 600=beginner(0)
+  const speed = player.bestPace < 9999
+    ? Math.min(100, Math.max(5, Math.round((600 - player.bestPace) / 3.6)))
+    : 5;
+  // Stamina: total km run. 100km = 100 stamina
+  const stamina = Math.min(100, Math.round(player.totalDistance / 1000));
+  // Power: level * 5
+  const power = Math.min(100, player.level * 5);
+  // Streak bonus (up to +10)
+  const streakBonus = Math.min(10, player.streak);
+  // Overall score used in race sim
+  const overall = Math.round(speed * 0.4 + stamina * 0.35 + power * 0.2 + streakBonus * 0.5);
+  return { speed, stamina, power, streakBonus, overall };
+}
+
+export const ARENAS = [
   {
-    id: 'rookie',
-    name: '루키 트랙',
-    emoji: '🟢',
+    id: 'bronze',
+    name: '브론즈 아레나',
+    emoji: '🥉',
     requiredLevel: 1,
-    goalMeters: 1000,
-    xpBonus: 150,
-    coinBonus: 30,
-    desc: '1km 목표 달성으로 러닝 입문!',
-    color: '#22d97a',
+    color: '#CD7F32',
+    desc: '누구나 입장 가능한 입문 경기장',
+    winXP: 100, winCoin: 20, loseXP: 20, loseCoin: 5,
+    opponents: [
+      { name: '달리기 초보', emoji: '🐢', speed: 12, stamina: 8,  power: 5,  overall: 9  },
+      { name: '조깅맨',     emoji: '🚶', speed: 18, stamina: 12, power: 10, overall: 14 },
+      { name: '동네 러너',  emoji: '🏃', speed: 25, stamina: 18, power: 15, overall: 20 },
+    ],
   },
   {
-    id: 'challenger',
-    name: '챌린저 트랙',
-    emoji: '🔵',
+    id: 'silver',
+    name: '실버 아레나',
+    emoji: '🥈',
     requiredLevel: 3,
-    goalMeters: 2000,
-    xpBonus: 350,
-    coinBonus: 70,
-    desc: '2km를 달려 챌린저가 되어보세요.',
-    color: '#3b82f6',
+    color: '#A8A9AD',
+    desc: '꾸준히 달린 러너들의 무대',
+    winXP: 250, winCoin: 50, loseXP: 50, loseCoin: 10,
+    opponents: [
+      { name: '공원 러너',   emoji: '🏃', speed: 30, stamina: 25, power: 20, overall: 26 },
+      { name: '마라톤 준비생', emoji: '⚡', speed: 38, stamina: 32, power: 25, overall: 33 },
+      { name: '스피드스타',  emoji: '💨', speed: 45, stamina: 38, power: 30, overall: 39 },
+    ],
   },
   {
-    id: 'elite',
-    name: '엘리트 트랙',
-    emoji: '🟡',
+    id: 'gold',
+    name: '골드 아레나',
+    emoji: '🥇',
     requiredLevel: 5,
-    goalMeters: 5000,
-    xpBonus: 800,
-    coinBonus: 150,
-    desc: '5km 완주, 진정한 러너의 시작.',
-    color: '#f59e0b',
+    color: '#FFD700',
+    desc: '실력 있는 러너만 입장 가능',
+    winXP: 500, winCoin: 100, loseXP: 80, loseCoin: 15,
+    opponents: [
+      { name: '영토 사냥꾼',  emoji: '🦅', speed: 48, stamina: 45, power: 38, overall: 44 },
+      { name: '새벽 러너',    emoji: '🌙', speed: 55, stamina: 52, power: 44, overall: 51 },
+      { name: '트랙의 제왕',  emoji: '🔥', speed: 62, stamina: 58, power: 50, overall: 58 },
+    ],
   },
   {
-    id: 'master',
-    name: '마스터 트랙',
-    emoji: '🟠',
+    id: 'platinum',
+    name: '플래티넘 아레나',
+    emoji: '💎',
     requiredLevel: 8,
-    goalMeters: 10000,
-    xpBonus: 1800,
-    coinBonus: 300,
-    desc: '10km 풀코스를 정복하세요.',
-    color: '#f97316',
+    color: '#E5E4E2',
+    desc: '엘리트 러너들의 격전지',
+    winXP: 900, winCoin: 180, loseXP: 120, loseCoin: 20,
+    opponents: [
+      { name: '거리의 지배자',  emoji: '⚡', speed: 65, stamina: 62, power: 55, overall: 62 },
+      { name: '철인 러너',      emoji: '🦾', speed: 72, stamina: 68, power: 60, overall: 68 },
+      { name: '영토 왕',        emoji: '👑', speed: 78, stamina: 74, power: 66, overall: 74 },
+    ],
   },
   {
-    id: 'legend',
-    name: '레전드 트랙',
-    emoji: '🔴',
+    id: 'diamond',
+    name: '다이아 아레나',
+    emoji: '💠',
     requiredLevel: 12,
-    goalMeters: 21097,
-    xpBonus: 4000,
-    coinBonus: 600,
-    desc: '하프 마라톤 21km, 전설의 영역.',
-    color: '#ef4444',
+    color: '#B9F2FF',
+    desc: '전설에 도전하는 최강 러너들',
+    winXP: 1600, winCoin: 320, loseXP: 200, loseCoin: 30,
+    opponents: [
+      { name: '속도의 신',   emoji: '🌪️', speed: 80, stamina: 78, power: 72, overall: 78 },
+      { name: '불사조',      emoji: '🔥', speed: 85, stamina: 82, power: 76, overall: 82 },
+      { name: '다이아 킹',   emoji: '💎', speed: 88, stamina: 86, power: 80, overall: 86 },
+    ],
   },
   {
     id: 'champion',
-    name: '챔피언 트랙',
-    emoji: '👑',
+    name: '챔피언 아레나',
+    emoji: '🏆',
     requiredLevel: 17,
-    goalMeters: 42195,
-    xpBonus: 9000,
-    coinBonus: 1200,
-    desc: '풀 마라톤 42km — 최강자만 입장 가능.',
     color: '#a855f7',
+    desc: '최강자만 입장하는 전설의 경기장',
+    winXP: 3000, winCoin: 600, loseXP: 300, loseCoin: 40,
+    opponents: [
+      { name: '챔피언 I',   emoji: '🏅', speed: 90, stamina: 88, power: 84, overall: 89 },
+      { name: '챔피언 II',  emoji: '🎖️', speed: 94, stamina: 92, power: 88, overall: 93 },
+      { name: '전설의 러너', emoji: '👑', speed: 98, stamina: 96, power: 92, overall: 96 },
+    ],
   },
 ];
 
