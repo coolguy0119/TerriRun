@@ -105,6 +105,18 @@ export default function HomeScreen({ navigation }) {
         </LinearGradient>
       </TouchableOpacity>
 
+      {/* Delivery CTA */}
+      {player.totalCells > 0 && (
+        <TouchableOpacity style={styles.deliveryCta} onPress={() => navigation.navigate('Delivery')} activeOpacity={0.85}>
+          <Text style={styles.deliveryEmoji}>🛵</Text>
+          <View style={styles.deliveryInfo}>
+            <Text style={styles.deliveryTitle}>영토 배달 주문</Text>
+            <Text style={styles.deliverySub}>내 영토 {player.totalCells}칸 주변 식당에서 주문</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color="#555" />
+        </TouchableOpacity>
+      )}
+
       {/* Daily Missions */}
       <SectionHeader title="오늘의 미션" emoji="🎯" />
       <View style={styles.card}>
@@ -254,6 +266,12 @@ const styles = StyleSheet.create({
   runStats: { alignItems: 'flex-end' },
   runCells: { color: '#22d97a', fontSize: 13, fontWeight: '600' },
   runXp: { color: '#f59e0b', fontSize: 11 },
+
+  deliveryCta: { marginHorizontal: 12, marginBottom: 8, backgroundColor: '#141c14', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', flexDirection: 'row', alignItems: 'center', padding: 14, gap: 12 },
+  deliveryEmoji: { fontSize: 28 },
+  deliveryInfo: { flex: 1 },
+  deliveryTitle: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  deliverySub: { color: '#555', fontSize: 12, marginTop: 2 },
 
   achRow: { paddingHorizontal: 12, gap: 10, paddingBottom: 4 },
   achCard: { backgroundColor: '#141c14', borderRadius: 12, padding: 12, alignItems: 'center', gap: 6, width: 80, borderWidth: 1, borderColor: 'rgba(34,217,122,0.2)' },
