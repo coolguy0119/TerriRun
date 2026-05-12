@@ -3,7 +3,16 @@ import {
   View, Text, StyleSheet, TouchableOpacity, Alert,
   Animated, Vibration, Platform,
 } from 'react-native';
-import MapView, { Polygon, Polyline, Circle } from 'react-native-maps';
+
+// react-native-maps is not available on web
+let MapView, Polygon, Polyline, Circle;
+if (Platform.OS !== 'web') {
+  const Maps = require('react-native-maps');
+  MapView = Maps.default;
+  Polygon = Maps.Polygon;
+  Polyline = Maps.Polyline;
+  Circle = Maps.Circle;
+}
 import * as Location from 'expo-location';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -25,7 +34,21 @@ const ENEMY_COLOR      = '#ef4444';
 const ATTACKING_COLOR  = '#f97316';
 const MAP_DARK_STYLE   = require('../assets/mapStyle.json');
 
+function WebPlaceholder() {
+  return (
+    <View style={{ flex: 1, backgroundColor: '#0d1117', alignItems: 'center', justifyContent: 'center', padding: 32, gap: 16 }}>
+      <Text style={{ fontSize: 64 }}>📱</Text>
+      <Text style={{ color: '#fff', fontSize: 22, fontWeight: '800', textAlign: 'center' }}>모바일 전용 기능</Text>
+      <Text style={{ color: '#555', fontSize: 15, textAlign: 'center', lineHeight: 22 }}>
+        GPS 달리기는 iPhone 앱에서만 사용 가능합니다.{'\n'}Expo Go 앱을 설치하고 QR코드를 스캔하세요.
+      </Text>
+    </View>
+  );
+}
+
 export default function RunScreen({ navigation }) {
+  if (Platform.OS === 'web') return <WebPlaceholder />;
+
   const insets = useSafeAreaInsets();
   const mapRef = useRef(null);
 

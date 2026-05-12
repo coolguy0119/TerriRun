@@ -3,6 +3,12 @@
     "name": "TerraRun",
     "slug": "terrarun",
     "version": "1.0.0",
+    "platforms": ["ios", "android", "web"],
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./src/assets/icon.png"
+    },
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "splash": {

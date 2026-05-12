@@ -1,8 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, Alert, Animated,
+  View, Text, StyleSheet, TouchableOpacity, Alert, Animated, Platform,
 } from 'react-native';
-import MapView, { Polyline, Circle } from 'react-native-maps';
+
+let MapView, Polyline, Circle;
+if (Platform.OS !== 'web') {
+  const Maps = require('react-native-maps');
+  MapView = Maps.default;
+  Polyline = Maps.Polyline;
+  Circle = Maps.Circle;
+}
 import * as Location from 'expo-location';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -15,6 +22,14 @@ import { calcLevel } from '../game/GameEngine';
 const MAP_DARK = require('../assets/mapStyle.json');
 
 export default function TrackRunScreen({ navigation, route }) {
+  if (Platform.OS === 'web') return (
+    <View style={{ flex: 1, backgroundColor: '#0d1117', alignItems: 'center', justifyContent: 'center', padding: 32, gap: 16 }}>
+      <Text style={{ fontSize: 64 }}>📱</Text>
+      <Text style={{ color: '#fff', fontSize: 22, fontWeight: '800' }}>모바일 전용 기능</Text>
+      <Text style={{ color: '#555', fontSize: 15, textAlign: 'center' }}>GPS 달리기는 iPhone 앱에서만 사용 가능합니다.</Text>
+    </View>
+  );
+
   const { track } = route.params;
   const insets = useSafeAreaInsets();
   const mapRef = useRef(null);
