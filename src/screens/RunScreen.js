@@ -282,12 +282,12 @@ export default function RunScreen({ navigation }) {
   // ── Pause / Resume ────────────────────────────────────────────
   function togglePause() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setIsPaused((p) => !p);
-    if (isPaused) {
+    if (!isPaused) {
+      // pausing
       watchRef.current?.remove();
       clearInterval(timerRef.current);
     }
-    // Note: re-starting watch on resume omitted for brevity; real app should implement
+    setIsPaused((p) => !p);
   }
 
   // ── Stop Run ──────────────────────────────────────────────────

@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 
-import { getPlayer, getRunHistory, checkAndResetDaily } from '../utils/storage';
+import { getPlayer, savePlayer, getRunHistory, checkAndResetDaily } from '../utils/storage';
 import { calcLevel, xpProgress, getLeague, getNextLeague, DAILY_MISSIONS, ACHIEVEMENTS } from '../game/GameEngine';
 import { formatDistance, formatArea, cellsToArea } from '../utils/geo';
 import { C, G, hpColor, shadow } from '../theme/pokemon';
@@ -23,7 +23,9 @@ export default function HomeScreen({ navigation }) {
 
   async function loadData() {
     let p = await getPlayer();
-    p = checkAndResetDaily(p);
+    const reset = checkAndResetDaily(p);
+    if (reset !== p) await savePlayer(reset);
+    p = reset;
     setPlayer(p);
     const h = await getRunHistory();
     setHistory(h.slice(0, 10));
