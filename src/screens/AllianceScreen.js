@@ -10,8 +10,9 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import { getPlayer, savePlayer, getEnemies, saveEnemies } from '../utils/storage';
 import { ENEMY_ALLIANCES, BATTLE_GAMES, ATTACK_COST, DEFEND_COST, createAlliance, canAttack, doAttack } from '../game/AllianceEngine';
+import { C } from '../theme/pokemon';
 
-const ALLIANCE_COLORS = ['#ef4444', '#3b82f6', '#22d97a', '#f59e0b', '#8b5cf6', '#ec4899'];
+const ALLIANCE_COLORS = ['#CC0000', '#3D7DCA', '#4CAF50', '#FFCB05', '#A040A0', '#F08030'];
 
 export default function AllianceScreen({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -94,7 +95,7 @@ export default function AllianceScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
-      <LinearGradient colors={['#1a0a2e', '#0d1117']} style={[styles.header, { paddingTop: insets.top + 16 }]}>
+      <LinearGradient colors={['#0a0f2a', '#1a1a2e']} style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <Text style={styles.headerTitle}>⚔️ 연맹</Text>
         {alliance && (
           <View style={[styles.myAllianceBadge, { borderColor: alliance.color }]}>
@@ -227,61 +228,61 @@ export default function AllianceScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0d1117' },
+  container: { flex: 1, backgroundColor: C.bg },
   header: { padding: 20, paddingBottom: 24, alignItems: 'center', gap: 12 },
-  headerTitle: { color: '#fff', fontSize: 22, fontWeight: '800' },
-  myAllianceBadge: { flexDirection: 'row', alignItems: 'center', gap: 8, borderWidth: 1, borderRadius: 20, paddingHorizontal: 16, paddingVertical: 8 },
-  myTag: { fontWeight: '800', fontSize: 14 },
-  myName: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  myWins: { color: '#f59e0b', fontSize: 13 },
+  headerTitle: { color: C.yellow, fontSize: 22, fontWeight: '900', letterSpacing: 2 },
+  myAllianceBadge: { flexDirection: 'row', alignItems: 'center', gap: 8, borderWidth: 2, borderRadius: 20, paddingHorizontal: 16, paddingVertical: 8 },
+  myTag: { fontWeight: '900', fontSize: 14 },
+  myName: { color: C.text, fontSize: 15, fontWeight: '700' },
+  myWins: { color: C.yellow, fontSize: 13, fontWeight: '700' },
 
   noAllianceArea: { padding: 16, gap: 12 },
-  noAllianceText: { color: '#888', textAlign: 'center', fontSize: 14, marginTop: 8 },
-  createBtn: { backgroundColor: '#8b5cf6', borderRadius: 14, padding: 16, alignItems: 'center' },
-  createBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
-  sectionLabel: { color: '#888', fontSize: 13, fontWeight: '600', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 },
+  noAllianceText: { color: C.text3, textAlign: 'center', fontSize: 14, marginTop: 8 },
+  createBtn: { backgroundColor: C.purple, borderRadius: 14, padding: 16, alignItems: 'center', borderWidth: 2, borderColor: 'rgba(160,64,160,0.5)' },
+  createBtnText: { color: '#fff', fontSize: 16, fontWeight: '800' },
+  sectionLabel: { color: C.yellow, fontSize: 11, fontWeight: '900', letterSpacing: 1.5, textTransform: 'uppercase', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 },
 
-  bpCard: { margin: 16, backgroundColor: '#1a0a2e', borderRadius: 14, padding: 16, gap: 8, borderWidth: 1, borderColor: 'rgba(139,92,246,0.3)' },
-  bpLabel: { color: '#888', fontSize: 13, fontWeight: '600' },
-  bpValue: { color: '#8b5cf6', fontSize: 36, fontWeight: '800' },
-  bpBar: { height: 8, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 4, overflow: 'hidden' },
-  bpFill: { height: '100%', backgroundColor: '#8b5cf6', borderRadius: 4 },
-  bpHint: { color: '#555', fontSize: 11 },
+  bpCard: { margin: 16, backgroundColor: C.card, borderRadius: 16, padding: 16, gap: 8, borderWidth: 2, borderColor: 'rgba(160,64,160,0.4)' },
+  bpLabel: { color: C.text2, fontSize: 13, fontWeight: '700' },
+  bpValue: { color: C.purple, fontSize: 36, fontWeight: '900' },
+  bpBar: { height: 10, backgroundColor: C.border, borderRadius: 5, overflow: 'hidden' },
+  bpFill: { height: '100%', backgroundColor: C.purple, borderRadius: 5 },
+  bpHint: { color: C.text3, fontSize: 11 },
 
-  gameCard: { marginHorizontal: 16, marginBottom: 8, backgroundColor: '#1a1a2e', borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: 'rgba(139,92,246,0.2)' },
+  gameCard: { marginHorizontal: 16, marginBottom: 8, backgroundColor: C.card, borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 2, borderColor: C.border },
   gameEmoji: { fontSize: 30, width: 40, textAlign: 'center' },
   gameInfo: { flex: 1 },
-  gameName: { color: '#fff', fontSize: 15, fontWeight: '700' },
-  gameDesc: { color: '#666', fontSize: 12, marginTop: 2 },
+  gameName: { color: C.text, fontSize: 15, fontWeight: '800' },
+  gameDesc: { color: C.text3, fontSize: 12, marginTop: 2 },
 
-  allianceCard: { marginHorizontal: 16, marginBottom: 8, backgroundColor: '#141c14', borderRadius: 14, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1 },
+  allianceCard: { marginHorizontal: 16, marginBottom: 8, backgroundColor: C.card, borderRadius: 14, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 2 },
   allianceTag: { width: 44, height: 44, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-  tagText: { fontSize: 13, fontWeight: '800' },
+  tagText: { fontSize: 13, fontWeight: '900' },
   allianceInfo: { flex: 1 },
-  allianceName: { color: '#fff', fontSize: 14, fontWeight: '700' },
-  allianceDesc: { color: '#666', fontSize: 11, marginTop: 2 },
-  allianceStats: { color: '#888', fontSize: 11, marginTop: 2 },
-  attackedNote: { color: '#22d97a', fontSize: 11, marginTop: 2 },
+  allianceName: { color: C.text, fontSize: 14, fontWeight: '800' },
+  allianceDesc: { color: C.text3, fontSize: 11, marginTop: 2 },
+  allianceStats: { color: C.text2, fontSize: 11, marginTop: 2 },
+  attackedNote: { color: C.green, fontSize: 11, marginTop: 2, fontWeight: '700' },
   joinBtn: { borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 },
-  joinBtnText: { color: '#fff', fontSize: 13, fontWeight: '700' },
-  attackBtn: { backgroundColor: '#ef4444', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8 },
-  attackBtnDisabled: { backgroundColor: '#2a1a1a' },
-  attackBtnText: { color: '#fff', fontSize: 12, fontWeight: '700' },
+  joinBtnText: { color: '#fff', fontSize: 13, fontWeight: '800' },
+  attackBtn: { backgroundColor: C.red, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8, borderWidth: 2, borderColor: 'rgba(204,0,0,0.5)' },
+  attackBtnDisabled: { backgroundColor: C.card2, borderColor: C.border },
+  attackBtnText: { color: '#fff', fontSize: 12, fontWeight: '800' },
 
   leaveBtn: { margin: 16, padding: 14, alignItems: 'center' },
-  leaveBtnText: { color: '#ef4444', fontSize: 14 },
+  leaveBtnText: { color: C.red, fontSize: 14, fontWeight: '700' },
 
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'flex-end' },
-  modalSheet: { backgroundColor: '#111', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, gap: 14 },
-  modalTitle: { color: '#fff', fontSize: 20, fontWeight: '800', textAlign: 'center' },
-  input: { backgroundColor: '#1a1a1a', borderRadius: 12, padding: 14, color: '#fff', fontSize: 16, borderWidth: 1, borderColor: '#333' },
-  colorLabel: { color: '#888', fontSize: 13 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.75)', justifyContent: 'flex-end' },
+  modalSheet: { backgroundColor: C.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, gap: 14, borderTopWidth: 2, borderTopColor: C.yellow },
+  modalTitle: { color: C.yellow, fontSize: 20, fontWeight: '900', textAlign: 'center', letterSpacing: 1 },
+  input: { backgroundColor: C.bg, borderRadius: 12, padding: 14, color: C.text, fontSize: 16, borderWidth: 2, borderColor: C.border },
+  colorLabel: { color: C.text2, fontSize: 13, fontWeight: '700' },
   colorRow: { flexDirection: 'row', gap: 12, justifyContent: 'center' },
   colorDot: { width: 32, height: 32, borderRadius: 16 },
-  colorDotSelected: { borderWidth: 3, borderColor: '#fff' },
+  colorDotSelected: { borderWidth: 3, borderColor: C.yellow },
   modalBtns: { flexDirection: 'row', gap: 12 },
-  cancelBtn: { flex: 1, backgroundColor: '#1a1a1a', borderRadius: 12, padding: 14, alignItems: 'center' },
-  cancelText: { color: '#888', fontSize: 16 },
-  confirmBtn: { flex: 1, backgroundColor: '#8b5cf6', borderRadius: 12, padding: 14, alignItems: 'center' },
-  confirmText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  cancelBtn: { flex: 1, backgroundColor: C.bg, borderRadius: 12, padding: 14, alignItems: 'center', borderWidth: 2, borderColor: C.border },
+  cancelText: { color: C.text2, fontSize: 16, fontWeight: '700' },
+  confirmBtn: { flex: 1, backgroundColor: C.purple, borderRadius: 12, padding: 14, alignItems: 'center' },
+  confirmText: { color: '#fff', fontSize: 16, fontWeight: '800' },
 });

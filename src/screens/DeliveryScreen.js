@@ -10,6 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getTerritories } from '../utils/storage';
 import { cellCenter, CELL_SIZE, formatDistance } from '../utils/geo';
 import { getNearbyRestaurants, isMockData } from '../services/restaurantService';
+import { C } from '../theme/pokemon';
 
 // 캡처된 영토들의 중심 좌표 계산
 function getTerritoryCenter(territories) {
@@ -113,9 +114,9 @@ export default function DeliveryScreen({ navigation }) {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* Header */}
-      <LinearGradient colors={['#0f1a0f', '#0d1117']} style={styles.header}>
+      <LinearGradient colors={['#0a0f2a', '#1a1a2e']} style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={22} color="#fff" />
+          <Ionicons name="chevron-back" size={22} color={C.yellow} />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>🛵 영토 배달</Text>
@@ -206,50 +207,50 @@ export default function DeliveryScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0d1117' },
+  container: { flex: 1, backgroundColor: C.bg },
   header: { flexDirection: 'row', alignItems: 'center', padding: 16, paddingBottom: 14, gap: 12 },
   backBtn: { padding: 4 },
   headerCenter: { flex: 1 },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: '800' },
-  headerSub: { color: '#22d97a', fontSize: 12, marginTop: 2 },
+  headerTitle: { color: C.yellow, fontSize: 20, fontWeight: '900', letterSpacing: 1 },
+  headerSub: { color: C.text2, fontSize: 12, marginTop: 2 },
 
-  mockBanner: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(245,158,11,0.1)', paddingHorizontal: 16, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: 'rgba(245,158,11,0.2)' },
-  mockText: { color: '#f59e0b', fontSize: 11, flex: 1 },
+  mockBanner: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,203,5,0.08)', paddingHorizontal: 16, paddingVertical: 8, borderBottomWidth: 2, borderBottomColor: 'rgba(255,203,5,0.2)' },
+  mockText: { color: C.yellow, fontSize: 11, flex: 1 },
 
   radiusRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingVertical: 10 },
-  radiusLabel: { color: '#555', fontSize: 12, marginRight: 4 },
-  radiusChip: { backgroundColor: '#1a1a1a', borderRadius: 16, paddingHorizontal: 12, paddingVertical: 5, borderWidth: 1, borderColor: '#333' },
-  radiusChipOn: { backgroundColor: 'rgba(34,217,122,0.15)', borderColor: '#22d97a' },
-  radiusChipText: { color: '#555', fontSize: 12, fontWeight: '600' },
-  radiusChipTextOn: { color: '#22d97a' },
+  radiusLabel: { color: C.text3, fontSize: 12, marginRight: 4, fontWeight: '700' },
+  radiusChip: { backgroundColor: C.card, borderRadius: 16, paddingHorizontal: 12, paddingVertical: 5, borderWidth: 2, borderColor: C.border },
+  radiusChipOn: { backgroundColor: 'rgba(255,203,5,0.12)', borderColor: C.yellow },
+  radiusChipText: { color: C.text3, fontSize: 12, fontWeight: '700' },
+  radiusChipTextOn: { color: C.yellow, fontWeight: '800' },
 
   appRow: { paddingHorizontal: 16, paddingBottom: 10 },
-  appRowLabel: { color: '#555', fontSize: 12, marginBottom: 8 },
+  appRowLabel: { color: C.text3, fontSize: 12, marginBottom: 8, fontWeight: '700' },
   appBtns: { flexDirection: 'row', gap: 10 },
-  appBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, borderWidth: 1, borderRadius: 12, paddingVertical: 10 },
+  appBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, borderWidth: 2, borderRadius: 12, paddingVertical: 10 },
   appEmoji: { fontSize: 18 },
-  appName: { fontSize: 12, fontWeight: '700' },
+  appName: { fontSize: 12, fontWeight: '800' },
 
   list: { paddingHorizontal: 16, paddingBottom: 40, gap: 8 },
-  listHeader: { color: '#555', fontSize: 13, fontWeight: '600', marginBottom: 6 },
-  restaurantCard: { backgroundColor: '#141c14', borderRadius: 14, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
+  listHeader: { color: C.text2, fontSize: 13, fontWeight: '700', marginBottom: 6 },
+  restaurantCard: { backgroundColor: C.card, borderRadius: 14, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 2, borderColor: C.border },
   restaurantLeft: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 },
   restaurantEmoji: { fontSize: 28, width: 36, textAlign: 'center' },
   restaurantInfo: { flex: 1 },
-  restaurantName: { color: '#fff', fontSize: 14, fontWeight: '700' },
-  restaurantCategory: { color: '#888', fontSize: 11, marginTop: 2 },
-  restaurantDist: { color: '#22d97a', fontSize: 11, marginTop: 2 },
+  restaurantName: { color: C.text, fontSize: 14, fontWeight: '800' },
+  restaurantCategory: { color: C.text2, fontSize: 11, marginTop: 2 },
+  restaurantDist: { color: C.yellow, fontSize: 11, marginTop: 2, fontWeight: '700' },
   orderBtns: { flexDirection: 'row', gap: 6 },
-  orderBtn: { width: 34, height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
+  orderBtn: { width: 34, height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center', borderWidth: 2 },
   orderBtnText: { fontSize: 18 },
 
   emptyArea: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 },
   emptyEmoji: { fontSize: 56 },
-  emptyTitle: { color: '#fff', fontSize: 20, fontWeight: '700' },
-  emptyDesc: { color: '#555', fontSize: 14, textAlign: 'center', lineHeight: 20 },
-  goRunBtn: { backgroundColor: '#22d97a', borderRadius: 14, paddingHorizontal: 32, paddingVertical: 12, marginTop: 8 },
-  goRunText: { color: '#000', fontSize: 16, fontWeight: '700' },
+  emptyTitle: { color: C.text, fontSize: 20, fontWeight: '800' },
+  emptyDesc: { color: C.text3, fontSize: 14, textAlign: 'center', lineHeight: 20 },
+  goRunBtn: { backgroundColor: C.yellow, borderRadius: 14, paddingHorizontal: 32, paddingVertical: 12, marginTop: 8 },
+  goRunText: { color: '#1a1a2e', fontSize: 16, fontWeight: '900' },
 
   emptyList: { padding: 32, alignItems: 'center' },
-  emptyListText: { color: '#555', fontSize: 14 },
+  emptyListText: { color: C.text3, fontSize: 14 },
 });

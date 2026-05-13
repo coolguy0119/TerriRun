@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, TextInput,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, TextInput, Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,7 +8,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 
 import { getPlayer, savePlayer, getTerritories, saveTerritories, checkAndResetDaily } from '../utils/storage';
+import { C, G, hpColor, shadow } from '../theme/pokemon';
 import { calcLevel, xpProgress, getLeague, ACHIEVEMENTS, DAILY_MISSIONS, SHIELD_COST, SHIELD_DURATION_MS, buyShield } from '../game/GameEngine';
+import { logout } from '../services/authService';
 import ItemShopModal from '../components/ItemShopModal';
 import { formatDistance, formatArea, cellsToArea } from '../utils/geo';
 
@@ -72,14 +74,13 @@ export default function ProfileScreen({ navigation }) {
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
       {/* Header */}
-      <LinearGradient colors={['#0f1f10', '#0d1117']} style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={22} color="#fff" />
-        </TouchableOpacity>
+      <LinearGradient colors={G.header} style={[styles.header, { paddingTop: insets.top + 16 }]}>
 
         <View style={styles.avatarArea}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{player.name[0]}</Text>
+            <LinearGradient colors={G.vibrant} style={styles.avatarInner}>
+              <Text style={styles.avatarText}>{player.name[0]}</Text>
+            </LinearGradient>
           </View>
           {editingName ? (
             <View style={styles.nameEditRow}>
@@ -192,7 +193,7 @@ export default function ProfileScreen({ navigation }) {
             <Text style={[styles.boardRank, i === 0 && { color: '#FFD700' }, i === 1 && { color: '#C0C0C0' }, i === 2 && { color: '#CD7F32' }]}>
               {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}`}
             </Text>
-            <Text style={[styles.boardName, entry.isMe && { color: '#22d97a' }]}>
+            <Text style={[styles.boardName, entry.isMe && { color: C.yellow }]}>
               {entry.name}{entry.isMe ? ' (나)' : ''}
             </Text>
             <Text style={styles.boardLeague}>{entry.league}</Text>
@@ -200,6 +201,24 @@ export default function ProfileScreen({ navigation }) {
           </View>
         ))}
       </View>
+
+      {/* Logout */}
+      <TouchableOpacity
+        style={styles.logoutBtn}
+        onPress={() => {
+          if (window?.confirm?.('로그아웃 하시겠어요?')) {
+            logout();
+          } else if (Platform.OS !== 'web') {
+            Alert.alert('로그아웃', '로그아웃 하시겠어요?', [
+              { text: '취소', style: 'cancel' },
+              { text: '로그아웃', style: 'destructive', onPress: () => logout() },
+            ]);
+          }
+        }}
+      >
+        <Ionicons name="log-out-outline" size={20} color={C.red} />
+        <Text style={styles.logoutText}>로그아웃</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -223,65 +242,67 @@ function SectionHeader({ title, sub }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0d1117' },
+  container: { flex: 1, backgroundColor: C.bg },
   header: { padding: 20, paddingBottom: 24 },
-  backBtn: { marginBottom: 16 },
+  logoutBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, margin: 16, marginTop: 24, backgroundColor: 'rgba(204,0,0,0.1)', borderRadius: 14, paddingVertical: 16, borderWidth: 2, borderColor: 'rgba(204,0,0,0.4)' },
+  logoutText: { color: C.red, fontSize: 16, fontWeight: '900' },
   avatarArea: { alignItems: 'center', marginBottom: 20 },
-  avatar: { width: 72, height: 72, borderRadius: 36, backgroundColor: '#22d97a', alignItems: 'center', justifyContent: 'center', marginBottom: 12, borderWidth: 3, borderColor: '#16a057' },
-  avatarText: { color: '#000', fontSize: 30, fontWeight: '700' },
-  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
-  playerName: { color: '#fff', fontSize: 22, fontWeight: '700' },
-  nameEditRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },
-  nameInput: { color: '#fff', fontSize: 20, fontWeight: '600', borderBottomWidth: 1, borderBottomColor: '#22d97a', paddingVertical: 2, minWidth: 120, textAlign: 'center' },
-  leagueBadge: { color: '#888', fontSize: 13 },
+  avatar: { width: 80, height: 80, borderRadius: 40, overflow: 'hidden', marginBottom: 12 },
+  avatarInner: { width: 80, height: 80, alignItems: 'center', justifyContent: 'center' },
+  avatarText: { color: '#fff', fontSize: 32, fontWeight: '700' },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
+  playerName: { color: C.text, fontSize: 24, fontWeight: '900', letterSpacing: 0.5 },
+  nameEditRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
+  nameInput: { color: C.text, fontSize: 20, fontWeight: '700', borderBottomWidth: 2, borderBottomColor: C.yellow, paddingVertical: 2, minWidth: 120, textAlign: 'center' },
+  leagueBadge: { color: C.text2, fontSize: 13, fontWeight: '700', letterSpacing: 0.5 },
   xpSection: { gap: 6 },
   xpLabelRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  xpLabel: { color: '#22d97a', fontSize: 12, fontWeight: '600' },
-  xpVal: { color: '#555', fontSize: 12 },
-  xpBg: { height: 8, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 4, overflow: 'hidden' },
-  xpFill: { height: '100%', backgroundColor: '#22d97a', borderRadius: 4 },
-  xpNeeded: { color: '#444', fontSize: 11, textAlign: 'right' },
+  xpLabel: { color: C.yellow, fontSize: 12, fontWeight: '800', letterSpacing: 1 },
+  xpVal: { color: C.text2, fontSize: 12 },
+  xpBg: { height: 10, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 5, overflow: 'hidden', borderWidth: 1, borderColor: C.border },
+  xpFill: { height: '100%', backgroundColor: C.yellow, borderRadius: 5 },
+  xpNeeded: { color: C.text3, fontSize: 11, textAlign: 'right' },
 
   statsRow: { flexDirection: 'row', padding: 12, gap: 8 },
-  miniStat: { flex: 1, backgroundColor: '#141c14', borderRadius: 10, padding: 10, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
-  miniVal: { fontSize: 14, fontWeight: '700' },
-  miniLabel: { color: '#555', fontSize: 10, marginTop: 2 },
+  miniStat: { flex: 1, backgroundColor: C.card, borderRadius: 12, padding: 10, alignItems: 'center', borderWidth: 2, borderColor: C.border, ...shadow },
+  miniVal: { fontSize: 14, fontWeight: '800' },
+  miniLabel: { color: C.text2, fontSize: 10, marginTop: 2, fontWeight: '700', letterSpacing: 0.5 },
 
-  resourceCard: { marginHorizontal: 12, marginBottom: 4, backgroundColor: '#141c14', borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: 'rgba(245,158,11,0.2)' },
-  coins: { color: '#f59e0b', fontSize: 18, fontWeight: '700', flex: 1 },
-  coinsNote: { color: '#555', fontSize: 11 },
+  resourceCard: { marginHorizontal: 12, marginBottom: 4, backgroundColor: C.card, borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 2, borderColor: C.border, borderLeftWidth: 5, borderLeftColor: C.orange, ...shadow },
+  coins: { color: C.yellow, fontSize: 18, fontWeight: '900', flex: 1 },
+  coinsNote: { color: C.text3, fontSize: 11 },
 
-  itemShopBtn: { marginHorizontal: 12, marginTop: 8, backgroundColor: '#1a1a2e', borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(239,68,68,0.3)', alignItems: 'center', gap: 4 },
-  itemShopBtnText: { color: '#ef4444', fontSize: 16, fontWeight: '700' },
-  itemShopSub: { color: '#555', fontSize: 12 },
-  shieldCard: { marginHorizontal: 12, marginTop: 8, marginBottom: 4, backgroundColor: '#111827', borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: 'rgba(59,130,246,0.3)' },
+  itemShopBtn: { marginHorizontal: 12, marginTop: 8, backgroundColor: C.card, borderRadius: 14, padding: 16, borderWidth: 2, borderColor: C.red, alignItems: 'center', gap: 4, ...shadow },
+  itemShopBtnText: { color: C.red, fontSize: 16, fontWeight: '900' },
+  itemShopSub: { color: C.text3, fontSize: 12 },
+  shieldCard: { marginHorizontal: 12, marginTop: 8, marginBottom: 4, backgroundColor: C.card, borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 2, borderColor: C.border, borderLeftWidth: 5, borderLeftColor: C.blue, ...shadow },
   shieldInfo: { flex: 1, gap: 4 },
-  shieldTitle: { color: '#fff', fontSize: 15, fontWeight: '700' },
-  shieldDesc: { color: '#888', fontSize: 12, lineHeight: 17 },
-  shieldCost: { color: '#f59e0b', fontSize: 12, fontWeight: '600', marginTop: 2 },
-  shieldBtn: { backgroundColor: '#3b82f6', borderRadius: 10, paddingHorizontal: 16, paddingVertical: 10 },
-  shieldBtnActive: { backgroundColor: '#1e3a5f' },
-  shieldBtnText: { color: '#fff', fontSize: 14, fontWeight: '700' },
+  shieldTitle: { color: C.text, fontSize: 15, fontWeight: '800' },
+  shieldDesc: { color: C.text2, fontSize: 12, lineHeight: 17 },
+  shieldCost: { color: C.yellow, fontSize: 12, fontWeight: '700', marginTop: 2 },
+  shieldBtn: { backgroundColor: C.blue, borderRadius: 10, paddingHorizontal: 16, paddingVertical: 10, borderWidth: 2, borderColor: '#5a9af0' },
+  shieldBtnActive: { backgroundColor: '#1e3a5f', borderColor: C.border },
+  shieldBtnText: { color: '#fff', fontSize: 14, fontWeight: '800' },
 
   sectionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 20, paddingBottom: 10 },
-  sectionTitle: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  sectionSub: { color: '#555', fontSize: 13 },
+  sectionTitle: { color: C.yellow, fontSize: 13, fontWeight: '900', letterSpacing: 1.5, textTransform: 'uppercase' },
+  sectionSub: { color: C.text2, fontSize: 13, fontWeight: '700' },
 
   achGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 8, gap: 8 },
-  achCard: { width: '47%', backgroundColor: '#141c14', borderRadius: 12, padding: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', marginLeft: 4 },
-  achUnlocked: { borderColor: 'rgba(34,217,122,0.3)', backgroundColor: '#111d11' },
+  achCard: { width: '47%', backgroundColor: C.card, borderRadius: 12, padding: 12, borderWidth: 2, borderColor: C.border, marginLeft: 4, ...shadow },
+  achUnlocked: { borderColor: C.yellow, backgroundColor: 'rgba(255,203,5,0.06)' },
   achEmoji: { fontSize: 22, marginBottom: 4 },
-  achName: { color: '#ccc', fontSize: 13, fontWeight: '600', marginBottom: 2 },
-  achDesc: { color: '#555', fontSize: 11 },
-  achXp: { color: '#f59e0b', fontSize: 11, marginTop: 4, fontWeight: '600' },
-  locked: { color: '#333' },
+  achName: { color: C.text, fontSize: 13, fontWeight: '700', marginBottom: 2 },
+  achDesc: { color: C.text2, fontSize: 11 },
+  achXp: { color: C.yellow, fontSize: 11, marginTop: 4, fontWeight: '800' },
+  locked: { color: C.text3 },
 
-  boardCard: { marginHorizontal: 12, backgroundColor: '#141c14', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)', overflow: 'hidden' },
+  boardCard: { marginHorizontal: 12, backgroundColor: C.card, borderRadius: 16, borderWidth: 2, borderColor: C.border, overflow: 'hidden', ...shadow },
   boardRow: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14 },
-  boardRowMe: { backgroundColor: 'rgba(34,217,122,0.08)' },
-  boardDivider: { borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)' },
-  boardRank: { width: 28, color: '#555', fontSize: 14, fontWeight: '600', textAlign: 'center' },
-  boardName: { flex: 1, color: '#ddd', fontSize: 14, fontWeight: '500' },
+  boardRowMe: { backgroundColor: 'rgba(255,203,5,0.08)' },
+  boardDivider: { borderBottomWidth: 1, borderBottomColor: C.border },
+  boardRank: { width: 28, color: C.text2, fontSize: 14, fontWeight: '700', textAlign: 'center' },
+  boardName: { flex: 1, color: C.text, fontSize: 14, fontWeight: '600' },
   boardLeague: { fontSize: 16 },
-  boardCells: { color: '#22d97a', fontSize: 13, fontWeight: '600', minWidth: 40, textAlign: 'right' },
+  boardCells: { color: C.yellow, fontSize: 13, fontWeight: '800', minWidth: 40, textAlign: 'right' },
 });

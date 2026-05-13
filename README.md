@@ -41,8 +41,8 @@
 ### 설치
 
 ```bash
-git clone <repo>
-cd TerraRun
+git clone https://github.com/coolguy0119/TerriRun.git
+cd TerriRun
 npm install
 npx expo start
 ```
@@ -92,9 +92,20 @@ TerraRun/
     ├── screens/
     │   ├── HomeScreen.js           # 대시보드 (미션, 통계, 기록)
     │   ├── RunScreen.js            # 지도 + 달리기 메인 화면
-    │   └── ProfileScreen.js        # 프로필, 업적, 리더보드
+    │   ├── ProfileScreen.js        # 프로필, 업적, 리더보드
+    │   ├── DeliveryScreen.js       # 영토 기반 주변 배달 식당 탐색
+    │   ├── ArenaScreen.js          # 러닝 아레나 목록
+    │   ├── BattleScreen.js         # 아레나 대전 화면
+    │   ├── RaceScreen.js           # 가상 경주 시뮬레이션
+    │   ├── TrackListScreen.js      # 러닝 트랙 목록
+    │   ├── TrackRunScreen.js       # 트랙 달리기 화면
+    │   ├── AllianceScreen.js       # 연맹 시스템
+    │   └── LoginScreen.js          # 소셜 로그인 (카카오/구글)
     ├── components/
-    │   └── RunResultModal.js       # 달리기 완료 결과 팝업
+    │   ├── RunResultModal.js       # 달리기 완료 결과 팝업
+    │   └── ItemShopModal.js        # 아이템 상점 팝업
+    ├── services/
+    │   └── restaurantService.js    # 카카오 로컬 API 연동
     ├── game/
     │   └── GameEngine.js           # XP, 레벨, 업적, 미션 로직
     ├── utils/
@@ -153,7 +164,7 @@ XP = (거리m ÷ 15) + (새 영토칸 × 30) + (적 탈환칸 × 80)
 - [ ] **이벤트 지역** — 특정 랜드마크 점령 시 보너스
 - [ ] **통계 차트** — 주간/월간 달리기 분석
 - [ ] **Apple HealthKit** — 운동 데이터 연동
-- [ ] **백그라운드 추적** — 화면 꺼도 경로 기록
+- [x] **백그라운드 추적** — 화면 꺼도 경로 기록 (expo-task-manager 적용)
 
 ---
 

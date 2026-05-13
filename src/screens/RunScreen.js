@@ -3,7 +3,16 @@ import {
   View, Text, StyleSheet, TouchableOpacity, Alert,
   Animated, Vibration, Platform,
 } from 'react-native';
-import MapView, { Polygon, Polyline, Circle } from 'react-native-maps';
+
+// react-native-maps is not available on web
+let MapView, Polygon, Polyline, Circle;
+if (Platform.OS !== 'web') {
+  const Maps = require('react-native-maps');
+  MapView = Maps.default;
+  Polygon = Maps.Polygon;
+  Polyline = Maps.Polyline;
+  Circle = Maps.Circle;
+}
 import * as Location from 'expo-location';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -19,13 +28,33 @@ import { getTerritories, saveTerritories, getPlayer, savePlayer, saveRun, getEne
 import { processRunCompletion, calcXPGain, isShielded, buyShield, SHIELD_COST, ITEMS } from '../game/GameEngine';
 import RunResultModal from '../components/RunResultModal';
 
-const PLAYER_COLOR     = '#22d97a';
-const SHIELD_COLOR     = '#3b82f6';
-const ENEMY_COLOR      = '#ef4444';
-const ATTACKING_COLOR  = '#f97316';
+const PLAYER_COLOR     = '#FFCB05';
+const SHIELD_COLOR     = '#3D7DCA';
+const ENEMY_COLOR      = '#CC0000';
+const ATTACKING_COLOR  = '#F08030';
 const MAP_DARK_STYLE   = require('../assets/mapStyle.json');
 
+function WebPlaceholder() {
+  return (
+    <LinearGradient colors={['#0a0f2a', '#1a1a2e', '#0f1a3a']} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 20 }}>
+      <View style={{ width: 90, height: 90, borderRadius: 45, backgroundColor: '#CC0000', borderBottomColor: '#fff', borderWidth: 4, borderColor: '#1a1a2e', alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontSize: 40 }}>📱</Text>
+      </View>
+      <Text style={{ color: '#FFCB05', fontSize: 24, fontWeight: '900', letterSpacing: 2, textAlign: 'center' }}>모바일 전용</Text>
+      <View style={{ width: 50, height: 3, backgroundColor: '#FFCB05', borderRadius: 2 }} />
+      <Text style={{ color: '#8899BB', fontSize: 15, textAlign: 'center', lineHeight: 24 }}>
+        GPS 달리기는 모바일 앱에서만 사용 가능합니다.{'\n'}Expo Go 앱을 설치하고 QR코드를 스캔하세요.
+      </Text>
+      <View style={{ marginTop: 8, backgroundColor: 'rgba(255,203,5,0.08)', borderRadius: 14, borderWidth: 2, borderColor: 'rgba(255,203,5,0.3)', paddingHorizontal: 20, paddingVertical: 12 }}>
+        <Text style={{ color: '#FFCB05', fontSize: 13, fontWeight: '700', textAlign: 'center' }}>🗺️ 달리면서 영토를 정복하라!</Text>
+      </View>
+    </LinearGradient>
+  );
+}
+
 export default function RunScreen({ navigation }) {
+  if (Platform.OS === 'web') return <WebPlaceholder />;
+
   const insets = useSafeAreaInsets();
   const mapRef = useRef(null);
 
@@ -470,8 +499,8 @@ export default function RunScreen({ navigation }) {
                 </View>
               )}
               <TouchableOpacity style={styles.startBtn} onPress={startRun} activeOpacity={0.85}>
-                <LinearGradient colors={['#22d97a', '#16a057']} style={styles.startBtnGrad}>
-                  <Ionicons name="play" size={32} color="#000" />
+                <LinearGradient colors={['#FFCB05', '#F0A500']} style={styles.startBtnGrad}>
+                  <Ionicons name="play" size={32} color="#1a1a2e" />
                   <Text style={styles.startBtnText}>달리기 시작</Text>
                 </LinearGradient>
               </TouchableOpacity>
@@ -520,20 +549,20 @@ export default function RunScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0d1117' },
+  container: { flex: 1, backgroundColor: '#1a1a2e' },
 
   notifBanner: {
     position: 'absolute',
     alignSelf: 'center',
-    backgroundColor: 'rgba(0,0,0,0.85)',
+    backgroundColor: 'rgba(26,26,46,0.95)',
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderWidth: 1,
-    borderColor: '#22d97a',
+    borderWidth: 2,
+    borderColor: '#FFCB05',
     zIndex: 10,
   },
-  notifText: { color: '#22d97a', fontWeight: '600', fontSize: 14 },
+  notifText: { color: '#FFCB05', fontWeight: '700', fontSize: 14 },
 
   topHud: {
     position: 'absolute',
@@ -595,7 +624,7 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 16,
   },
-  startBtnText: { color: '#000', fontSize: 18, fontWeight: '700' },
+  startBtnText: { color: '#1a1a2e', fontSize: 18, fontWeight: '900' },
 
   runBtns: { flex: 1, flexDirection: 'row', gap: 10 },
   pauseBtn: {
@@ -610,11 +639,11 @@ const styles = StyleSheet.create({
     flex: 2,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#22d97a',
+    backgroundColor: '#FFCB05',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
   },
-  stopBtnText: { color: '#000', fontSize: 16, fontWeight: '700' },
+  stopBtnText: { color: '#1a1a2e', fontSize: 16, fontWeight: '900' },
 });
