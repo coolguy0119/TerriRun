@@ -355,7 +355,7 @@ export default function ProfileScreen({ navigation }) {
             <Text style={[styles.boardRank, i === 0 && { color: '#FFD700' }, i === 1 && { color: '#C0C0C0' }, i === 2 && { color: '#CD7F32' }]}>
               {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}`}
             </Text>
-            <Text style={[styles.boardName, entry.isMe && { color: '#22d97a' }]}>
+            <Text style={[styles.boardName, entry.isMe && { color: '#A78BFA' }]}>
               {entry.name}{entry.isMe ? ' (나)' : ''}
             </Text>
             <Text style={styles.boardLeague}>{entry.league}</Text>
@@ -388,26 +388,26 @@ function SectionHeader({ title, sub }) {
 const chartStyles = StyleSheet.create({
   container: { flexDirection: 'row', alignItems: 'flex-end', height: 120, gap: 6, paddingHorizontal: 4 },
   barCol: { flex: 1, alignItems: 'center', height: '100%', justifyContent: 'flex-end', gap: 4 },
-  distLabel: { color: '#22d97a', fontSize: 9, fontWeight: '600' },
+  distLabel: { color: '#A78BFA', fontSize: 9, fontWeight: '600' },
   barTrack: { width: '100%', flex: 1, backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 4, overflow: 'hidden', justifyContent: 'flex-end' },
-  barFill: { width: '100%', backgroundColor: 'rgba(34,217,122,0.45)', borderRadius: 4 },
-  barToday: { backgroundColor: '#22d97a' },
+  barFill: { width: '100%', backgroundColor: 'rgba(167,139,250,0.45)', borderRadius: 4 },
+  barToday: { backgroundColor: '#A78BFA' },
   dayLabel: { color: '#555', fontSize: 11 },
-  dayToday: { color: '#22d97a', fontWeight: '700' },
+  dayToday: { color: '#A78BFA', fontWeight: '700' },
 });
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0d1117' },
+  container: { flex: 1, backgroundColor: '#0A0818' },
   header: { padding: 20, paddingBottom: 24 },
   backBtn: { marginBottom: 16 },
   avatarArea: { alignItems: 'center', marginBottom: 20 },
-  avatar: { width: 72, height: 72, borderRadius: 36, backgroundColor: '#22d97a', alignItems: 'center', justifyContent: 'center', marginBottom: 12, borderWidth: 3, borderColor: '#16a057' },
+  avatar: { width: 72, height: 72, borderRadius: 36, backgroundColor: '#A78BFA', alignItems: 'center', justifyContent: 'center', marginBottom: 12, borderWidth: 3, borderColor: '#7C3AED' },
   avatarText: { color: '#000', fontSize: 30, fontWeight: '700' },
   nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
   playerName: { color: '#fff', fontSize: 22, fontWeight: '700' },
   nameEditRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },
-  nameInput: { color: '#fff', fontSize: 20, fontWeight: '600', borderBottomWidth: 1, borderBottomColor: '#22d97a', paddingVertical: 2, minWidth: 120, textAlign: 'center' },
-  avatarImage: { width: 72, height: 72, borderRadius: 36, marginBottom: 12, borderWidth: 3, borderColor: '#22d97a' },
+  nameInput: { color: '#fff', fontSize: 20, fontWeight: '600', borderBottomWidth: 1, borderBottomColor: '#A78BFA', paddingVertical: 2, minWidth: 120, textAlign: 'center' },
+  avatarImage: { width: 72, height: 72, borderRadius: 36, marginBottom: 12, borderWidth: 3, borderColor: '#A78BFA' },
   leagueRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
   leagueBadge: { color: '#888', fontSize: 13 },
   kakaoBadge: { backgroundColor: '#FEE500', borderRadius: 4, paddingHorizontal: 6, paddingVertical: 1 },
@@ -416,25 +416,25 @@ const styles = StyleSheet.create({
   logoutText: { color: '#555', fontSize: 12 },
   xpSection: { gap: 6 },
   xpLabelRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  xpLabel: { color: '#22d97a', fontSize: 12, fontWeight: '600' },
+  xpLabel: { color: '#A78BFA', fontSize: 12, fontWeight: '600' },
   xpVal: { color: '#555', fontSize: 12 },
   xpBg: { height: 8, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 4, overflow: 'hidden' },
-  xpFill: { height: '100%', backgroundColor: '#22d97a', borderRadius: 4 },
+  xpFill: { height: '100%', backgroundColor: '#A78BFA', borderRadius: 4 },
   xpNeeded: { color: '#444', fontSize: 11, textAlign: 'right' },
 
   statsRow: { flexDirection: 'row', padding: 12, gap: 8 },
-  miniStat: { flex: 1, backgroundColor: '#141c14', borderRadius: 10, padding: 10, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
+  miniStat: { flex: 1, backgroundColor: '#130D2A', borderRadius: 10, padding: 10, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
   miniVal: { fontSize: 14, fontWeight: '700' },
   miniLabel: { color: '#555', fontSize: 10, marginTop: 2 },
 
-  chartCard: { marginHorizontal: 12, marginBottom: 8, backgroundColor: '#141c14', borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
+  chartCard: { marginHorizontal: 12, marginBottom: 8, backgroundColor: '#130D2A', borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
   emptyNote: { color: '#444', fontSize: 13, textAlign: 'center', paddingVertical: 20 },
 
-  resourceCard: { marginHorizontal: 12, marginBottom: 4, backgroundColor: '#141c14', borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: 'rgba(245,158,11,0.2)' },
+  resourceCard: { marginHorizontal: 12, marginBottom: 4, backgroundColor: '#130D2A', borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: 'rgba(245,158,11,0.2)' },
   coins: { color: '#f59e0b', fontSize: 18, fontWeight: '700', flex: 1 },
   coinsNote: { color: '#555', fontSize: 11 },
 
-  itemShopBtn: { marginHorizontal: 12, marginTop: 8, backgroundColor: '#1a1a2e', borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(239,68,68,0.3)', alignItems: 'center', gap: 4 },
+  itemShopBtn: { marginHorizontal: 12, marginTop: 8, backgroundColor: '#130D2A', borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(239,68,68,0.3)', alignItems: 'center', gap: 4 },
   itemShopBtnText: { color: '#ef4444', fontSize: 16, fontWeight: '700' },
   itemShopSub: { color: '#555', fontSize: 12 },
 
@@ -447,7 +447,7 @@ const styles = StyleSheet.create({
   shieldBtnActive: { backgroundColor: '#1e3a5f' },
   shieldBtnText: { color: '#fff', fontSize: 14, fontWeight: '700' },
 
-  upgradeCard: { marginHorizontal: 12, marginBottom: 4, backgroundColor: '#141c14', borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(245,158,11,0.2)', gap: 12 },
+  upgradeCard: { marginHorizontal: 12, marginBottom: 4, backgroundColor: '#130D2A', borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(245,158,11,0.2)', gap: 12 },
   defDistRow: { flexDirection: 'row', gap: 8 },
   defItem: { flex: 1, alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: 8 },
   defCount: { color: '#fff', fontSize: 18, fontWeight: '700' },
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
   upgradeBtnDisabled: { opacity: 0.35 },
   upgradeBtnTitle: { color: '#f59e0b', fontSize: 12, fontWeight: '700' },
   upgradeBtnSub: { color: '#888', fontSize: 10 },
-  upgradeBtnCost: { color: '#22d97a', fontSize: 10, fontWeight: '600' },
+  upgradeBtnCost: { color: '#A78BFA', fontSize: 10, fontWeight: '600' },
   upgradeNote: { color: '#444', fontSize: 11, textAlign: 'center' },
 
   sectionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 20, paddingBottom: 10 },
@@ -466,20 +466,20 @@ const styles = StyleSheet.create({
   sectionSub: { color: '#555', fontSize: 13 },
 
   achGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 8, gap: 8 },
-  achCard: { width: '47%', backgroundColor: '#141c14', borderRadius: 12, padding: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', marginLeft: 4 },
-  achUnlocked: { borderColor: 'rgba(34,217,122,0.3)', backgroundColor: '#111d11' },
+  achCard: { width: '47%', backgroundColor: '#130D2A', borderRadius: 12, padding: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', marginLeft: 4 },
+  achUnlocked: { borderColor: 'rgba(167,139,250,0.3)', backgroundColor: '#0A0818' },
   achEmoji: { fontSize: 22, marginBottom: 4 },
   achName: { color: '#ccc', fontSize: 13, fontWeight: '600', marginBottom: 2 },
   achDesc: { color: '#555', fontSize: 11 },
   achXp: { color: '#f59e0b', fontSize: 11, marginTop: 4, fontWeight: '600' },
   locked: { color: '#333' },
 
-  boardCard: { marginHorizontal: 12, backgroundColor: '#141c14', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)', overflow: 'hidden' },
+  boardCard: { marginHorizontal: 12, backgroundColor: '#130D2A', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)', overflow: 'hidden' },
   boardRow: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14 },
-  boardRowMe: { backgroundColor: 'rgba(34,217,122,0.08)' },
+  boardRowMe: { backgroundColor: 'rgba(167,139,250,0.08)' },
   boardDivider: { borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)' },
   boardRank: { width: 28, color: '#555', fontSize: 14, fontWeight: '600', textAlign: 'center' },
   boardName: { flex: 1, color: '#ddd', fontSize: 14, fontWeight: '500' },
   boardLeague: { fontSize: 16 },
-  boardCells: { color: '#22d97a', fontSize: 13, fontWeight: '600', minWidth: 40, textAlign: 'right' },
+  boardCells: { color: '#A78BFA', fontSize: 13, fontWeight: '600', minWidth: 40, textAlign: 'right' },
 });

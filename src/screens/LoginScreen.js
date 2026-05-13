@@ -47,7 +47,7 @@ export default function LoginScreen({ onLogin }) {
   }
 
   return (
-    <LinearGradient colors={['#0a0e1a', '#0d1117', '#0a100a']} style={[styles.container, { paddingTop: insets.top }]}>
+    <LinearGradient colors={['#0A0818', '#150B35', '#0A0818']} style={[styles.container, { paddingTop: insets.top }]}>
       {/* Logo / Title */}
       <View style={styles.logoArea}>
         <View style={styles.logoCircle}>
@@ -107,9 +107,9 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#0f2a18',
+    backgroundColor: '#1A0A3E',
     borderWidth: 2,
-    borderColor: '#22d97a',
+    borderColor: '#A78BFA',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 15,
-    color: '#7a9a8a',
+    color: 'rgba(255,255,255,0.55)',
     letterSpacing: 0.5,
   },
   btnArea: {
@@ -131,8 +131,8 @@ const styles = StyleSheet.create({
   },
   kakaoBtn: {
     backgroundColor: '#FEE500',
-    borderRadius: 12,
-    height: 52,
+    borderRadius: 14,
+    height: 54,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -153,24 +153,24 @@ const styles = StyleSheet.create({
     color: '#191919',
   },
   guestBtn: {
-    backgroundColor: 'transparent',
-    borderRadius: 12,
-    height: 48,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderRadius: 14,
+    height: 50,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   guestBtnText: {
     fontSize: 15,
-    color: '#aaa',
+    color: 'rgba(255,255,255,0.55)',
     fontWeight: '500',
   },
   notice: {
     marginTop: 24,
     fontSize: 12,
-    color: '#445',
+    color: 'rgba(255,255,255,0.3)',
     textAlign: 'center',
     lineHeight: 18,
   },

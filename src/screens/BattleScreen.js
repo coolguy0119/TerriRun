@@ -44,6 +44,6 @@ export default function BattleScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#1a1a2e' },
-  backBtn: { position: 'absolute', top: 50, left: 16, zIndex: 10, backgroundColor: 'rgba(26,26,46,0.85)', borderRadius: 20, padding: 6, borderWidth: 2, borderColor: 'rgba(255,203,5,0.4)' },
+  container: { flex: 1, backgroundColor: '#0A0818' },
+  backBtn: { position: 'absolute', top: 50, left: 16, zIndex: 10, backgroundColor: 'rgba(10,8,24,0.85)', borderRadius: 20, padding: 6, borderWidth: 2, borderColor: 'rgba(167,139,250,0.4)' },
 });
