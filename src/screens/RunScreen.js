@@ -29,11 +29,11 @@ import { syncMyTerritories, updateMyPosition, isMultiplayerEnabled } from '../se
 import { saveRunWorkout, isHealthKitAvailable, initHealthKit } from '../services/healthService';
 import RunResultModal from '../components/RunResultModal';
 
-const PLAYER_COLOR    = '#22d97a';
-const SHIELD_COLOR    = '#3b82f6';
-const ENEMY_COLOR     = '#ef4444';
-const ATTACKING_COLOR = '#f97316';
-const EVENT_COLOR     = '#f59e0b';
+const PLAYER_COLOR    = '#A78BFA';
+const SHIELD_COLOR    = '#60A5FA';
+const ENEMY_COLOR     = '#F472B6';
+const ATTACKING_COLOR = '#FB923C';
+const EVENT_COLOR     = '#FDE047';
 const MAP_DARK_STYLE  = require('../assets/mapStyle.json');
 
 export default function RunScreen({ navigation }) {
@@ -195,7 +195,7 @@ export default function RunScreen({ navigation }) {
             foregroundService: {
               notificationTitle: 'TerraRun 달리기 중',
               notificationBody: '영토를 캡처하고 있어요!',
-              notificationColor: '#22d97a',
+              notificationColor: '#A78BFA',
             },
           } : {}),
         });
@@ -597,7 +597,7 @@ export default function RunScreen({ navigation }) {
                 </View>
               )}
               <TouchableOpacity style={styles.startBtn} onPress={startRun} activeOpacity={0.85}>
-                <LinearGradient colors={['#22d97a', '#16a057']} style={styles.startBtnGrad}>
+                <LinearGradient colors={['#7C3AED', '#A855F7']} style={styles.startBtnGrad}>
                   <Ionicons name="play" size={32} color="#000" />
                   <Text style={styles.startBtnText}>달리기 시작</Text>
                 </LinearGradient>
@@ -645,15 +645,15 @@ export default function RunScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0d1117' },
+  container: { flex: 1, backgroundColor: '#0A0818' },
 
   notifBanner: {
     position: 'absolute', alignSelf: 'center',
     backgroundColor: 'rgba(0,0,0,0.85)', borderRadius: 20,
     paddingHorizontal: 16, paddingVertical: 8,
-    borderWidth: 1, borderColor: '#22d97a', zIndex: 10,
+    borderWidth: 1, borderColor: '#A78BFA', zIndex: 10,
   },
-  notifText: { color: '#22d97a', fontWeight: '600', fontSize: 14 },
+  notifText: { color: '#A78BFA', fontWeight: '600', fontSize: 14 },
 
   topHud: { position: 'absolute', top: 0, left: 0, right: 0, paddingBottom: 16 },
   hudRow: { flexDirection: 'row', justifyContent: 'space-around', paddingHorizontal: 20 },
@@ -685,6 +685,6 @@ const styles = StyleSheet.create({
 
   runBtns: { flex: 1, flexDirection: 'row', gap: 10 },
   pauseBtn: { flex: 1, height: 56, borderRadius: 28, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center' },
-  stopBtn: { flex: 2, height: 56, borderRadius: 28, backgroundColor: '#22d97a', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
+  stopBtn: { flex: 2, height: 56, borderRadius: 28, backgroundColor: '#A78BFA', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
   stopBtnText: { color: '#000', fontSize: 16, fontWeight: '700' },
 });

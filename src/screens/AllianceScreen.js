@@ -14,7 +14,7 @@ import {
   createAlliance, canAttack, doAttack,
 } from '../game/AllianceEngine';
 
-const ALLIANCE_COLORS = ['#ef4444', '#3b82f6', '#22d97a', '#f59e0b', '#8b5cf6', '#ec4899'];
+const ALLIANCE_COLORS = ['#ef4444', '#3b82f6', '#A78BFA', '#f59e0b', '#8b5cf6', '#ec4899'];
 
 // Mock alliance member list generated per alliance tag
 function getMockMembers(tag, color) {
@@ -152,7 +152,7 @@ export default function AllianceScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
-      <LinearGradient colors={['#1a0a2e', '#0d1117']} style={[styles.header, { paddingTop: insets.top + 16 }]}>
+      <LinearGradient colors={['#150B35', '#0A0818']} style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <Text style={styles.headerTitle}>⚔️ 연맹</Text>
         {alliance && (
           <View style={[styles.myAllianceBadge, { borderColor: alliance.color }]}>
@@ -351,11 +351,11 @@ export default function AllianceScreen({ navigation }) {
               .map((m, i) => (
                 <View key={i} style={styles.memberRow}>
                   <Text style={styles.memberRank}>{i + 1}</Text>
-                  <View style={[styles.memberAvatar, { backgroundColor: alliance?.color ?? '#22d97a' }]}>
+                  <View style={[styles.memberAvatar, { backgroundColor: alliance?.color ?? '#A78BFA' }]}>
                     <Text style={styles.memberAvatarText}>{m.name[0]}</Text>
                   </View>
                   <View style={styles.memberInfo}>
-                    <Text style={[styles.memberName, m.isMe && { color: '#22d97a' }]}>
+                    <Text style={[styles.memberName, m.isMe && { color: '#A78BFA' }]}>
                       {m.name}{m.isMe ? ' (나)' : ''}
                     </Text>
                     <Text style={styles.memberStats}>Lv.{m.level} · 영토 {m.cells}칸</Text>
@@ -374,7 +374,7 @@ export default function AllianceScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0d1117' },
+  container: { flex: 1, backgroundColor: '#0A0818' },
   header: { padding: 20, paddingBottom: 24, alignItems: 'center', gap: 12 },
   headerTitle: { color: '#fff', fontSize: 22, fontWeight: '800' },
   myAllianceBadge: { flexDirection: 'row', alignItems: 'center', gap: 8, borderWidth: 1, borderRadius: 20, paddingHorizontal: 16, paddingVertical: 8 },
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
 
   allianceStatsCard: { margin: 16, backgroundColor: '#1a0a2e', borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(139,92,246,0.3)' },
   statItem: { flex: 1, alignItems: 'center' },
-  statVal: { color: '#22d97a', fontSize: 26, fontWeight: '800' },
+  statVal: { color: '#A78BFA', fontSize: 26, fontWeight: '800' },
   statLabel: { color: '#666', fontSize: 11, marginTop: 2 },
   statDivider: { width: 1, height: 40, backgroundColor: 'rgba(255,255,255,0.1)' },
 
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
   bpFill: { height: '100%', backgroundColor: '#8b5cf6', borderRadius: 4 },
   bpHint: { color: '#555', fontSize: 11 },
 
-  missionsCard: { marginHorizontal: 16, marginBottom: 4, backgroundColor: '#141c14', borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
+  missionsCard: { marginHorizontal: 16, marginBottom: 4, backgroundColor: '#130D2A', borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
   missionRow: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)' },
   missionDone: { backgroundColor: 'rgba(34,217,122,0.05)' },
   missionEmoji: { fontSize: 24, width: 32, textAlign: 'center' },
@@ -413,24 +413,24 @@ const styles = StyleSheet.create({
   missionDesc: { color: '#666', fontSize: 11 },
   missionBar: { height: 4, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 2, overflow: 'hidden' },
   missionFill: { height: '100%', backgroundColor: '#8b5cf6', borderRadius: 2 },
-  missionFillDone: { backgroundColor: '#22d97a' },
+  missionFillDone: { backgroundColor: '#A78BFA' },
   missionProgress: { color: '#555', fontSize: 10 },
   missionCheck: { fontSize: 18 },
 
-  gameCard: { marginHorizontal: 16, marginBottom: 8, backgroundColor: '#1a1a2e', borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: 'rgba(139,92,246,0.2)' },
+  gameCard: { marginHorizontal: 16, marginBottom: 8, backgroundColor: '#130D2A', borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: 'rgba(139,92,246,0.2)' },
   gameEmoji: { fontSize: 30, width: 40, textAlign: 'center' },
   gameInfo: { flex: 1 },
   gameName: { color: '#fff', fontSize: 15, fontWeight: '700' },
   gameDesc: { color: '#666', fontSize: 12, marginTop: 2 },
 
-  allianceCard: { marginHorizontal: 16, marginBottom: 8, backgroundColor: '#141c14', borderRadius: 14, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1 },
+  allianceCard: { marginHorizontal: 16, marginBottom: 8, backgroundColor: '#130D2A', borderRadius: 14, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1 },
   allianceTag: { width: 44, height: 44, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   tagText: { fontSize: 13, fontWeight: '800' },
   allianceInfo: { flex: 1 },
   allianceName: { color: '#fff', fontSize: 14, fontWeight: '700' },
   allianceDesc: { color: '#666', fontSize: 11, marginTop: 2 },
   allianceStats: { color: '#888', fontSize: 11, marginTop: 2 },
-  attackedNote: { color: '#22d97a', fontSize: 11, marginTop: 2 },
+  attackedNote: { color: '#A78BFA', fontSize: 11, marginTop: 2 },
   joinBtn: { borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 },
   joinBtnText: { color: '#fff', fontSize: 13, fontWeight: '700' },
   actionBtns: { gap: 6 },

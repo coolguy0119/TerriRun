@@ -5,7 +5,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { loginWithKakao, isKakaoConfigured } from '../services/kakaoAuthService';
+import { loginWithKakao, isKakaoConfigured, getRedirectUri } from '../services/kakaoAuthService';
 
 export default function LoginScreen({ onLogin }) {
   const insets = useSafeAreaInsets();
@@ -15,7 +15,7 @@ export default function LoginScreen({ onLogin }) {
     if (!isKakaoConfigured()) {
       Alert.alert(
         '카카오 설정 필요',
-        'src/services/kakaoAuthService.js 파일에 KAKAO_REST_API_KEY를 입력해주세요.\n\n1. https://developers.kakao.com 에서 앱 생성\n2. REST API 키를 파일에 입력',
+        `카카오 개발자 콘솔(developers.kakao.com)에서:\n1. 앱 생성 후 REST API 키 복사\n2. kakaoAuthService.js에 키 입력\n3. Redirect URI 등록: ${getRedirectUri()}`,
         [{ text: '확인' }]
       );
       return;
@@ -23,9 +23,19 @@ export default function LoginScreen({ onLogin }) {
     setLoading(true);
     try {
       const authData = await loginWithKakao();
-      if (authData) await onLogin(authData);
+      if (authData) {
+        await onLogin(authData);
+      }
+      // null = 사용자가 직접 취소한 경우 (아무 알림 불필요)
     } catch (e) {
-      Alert.alert('로그인 실패', e.message);
+      Alert.alert(
+        '카카오 로그인 실패',
+        e.message,
+        [
+          { text: '게스트로 시작', onPress: handleGuestLogin },
+          { text: '확인', style: 'cancel' },
+        ]
+      );
     } finally {
       setLoading(false);
     }
@@ -37,7 +47,7 @@ export default function LoginScreen({ onLogin }) {
   }
 
   return (
-    <LinearGradient colors={['#0a0e1a', '#0d1117', '#0a100a']} style={[styles.container, { paddingTop: insets.top }]}>
+    <LinearGradient colors={['#0A0818', '#150B35', '#0A0818']} style={[styles.container, { paddingTop: insets.top }]}>
       {/* Logo / Title */}
       <View style={styles.logoArea}>
         <View style={styles.logoCircle}>
@@ -97,9 +107,9 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#0f2a18',
+    backgroundColor: '#1A0A3E',
     borderWidth: 2,
-    borderColor: '#22d97a',
+    borderColor: '#A78BFA',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -111,7 +121,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 15,
-    color: '#7a9a8a',
+    color: 'rgba(255,255,255,0.55)',
     letterSpacing: 0.5,
   },
   btnArea: {
@@ -121,8 +131,8 @@ const styles = StyleSheet.create({
   },
   kakaoBtn: {
     backgroundColor: '#FEE500',
-    borderRadius: 12,
-    height: 52,
+    borderRadius: 14,
+    height: 54,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -143,24 +153,24 @@ const styles = StyleSheet.create({
     color: '#191919',
   },
   guestBtn: {
-    backgroundColor: 'transparent',
-    borderRadius: 12,
-    height: 48,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderRadius: 14,
+    height: 50,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   guestBtnText: {
     fontSize: 15,
-    color: '#aaa',
+    color: 'rgba(255,255,255,0.55)',
     fontWeight: '500',
   },
   notice: {
     marginTop: 24,
     fontSize: 12,
-    color: '#445',
+    color: 'rgba(255,255,255,0.3)',
     textAlign: 'center',
     lineHeight: 18,
   },
