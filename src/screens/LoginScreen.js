@@ -5,7 +5,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { loginWithKakao, isKakaoConfigured } from '../services/kakaoAuthService';
+import { loginWithKakao, isKakaoConfigured, getRedirectUri } from '../services/kakaoAuthService';
 
 export default function LoginScreen({ onLogin }) {
   const insets = useSafeAreaInsets();
@@ -15,7 +15,7 @@ export default function LoginScreen({ onLogin }) {
     if (!isKakaoConfigured()) {
       Alert.alert(
         '카카오 설정 필요',
-        'src/services/kakaoAuthService.js 파일에 KAKAO_REST_API_KEY를 입력해주세요.\n\n1. https://developers.kakao.com 에서 앱 생성\n2. REST API 키를 파일에 입력',
+        `카카오 개발자 콘솔(developers.kakao.com)에서:\n1. 앱 생성 후 REST API 키 복사\n2. kakaoAuthService.js에 키 입력\n3. Redirect URI 등록: ${getRedirectUri()}`,
         [{ text: '확인' }]
       );
       return;
@@ -23,9 +23,19 @@ export default function LoginScreen({ onLogin }) {
     setLoading(true);
     try {
       const authData = await loginWithKakao();
-      if (authData) await onLogin(authData);
+      if (authData) {
+        await onLogin(authData);
+      }
+      // null = 사용자가 직접 취소한 경우 (아무 알림 불필요)
     } catch (e) {
-      Alert.alert('로그인 실패', e.message);
+      Alert.alert(
+        '카카오 로그인 실패',
+        e.message,
+        [
+          { text: '게스트로 시작', onPress: handleGuestLogin },
+          { text: '확인', style: 'cancel' },
+        ]
+      );
     } finally {
       setLoading(false);
     }
