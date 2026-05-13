@@ -1,6 +1,6 @@
 // ── 카카오 로컬 API 키 설정 ────────────────────────────────────
 // 카카오 개발자 콘솔(developers.kakao.com)에서 REST API 키를 발급받아 아래에 입력하세요.
-const KAKAO_REST_API_KEY = ''; // 예: 'abc1234def5678...'
+const KAKAO_REST_API_KEY = '227174d875bd067682004a57dcc6599d';
 
 const KAKAO_CATEGORY_CODES = {
   '음식점': 'FD6',

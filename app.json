@@ -4,6 +4,11 @@
     "slug": "terrarun",
     "scheme": "terrarun",
     "version": "1.0.0",
+    "platforms": ["ios", "android", "web"],
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "splash": {
