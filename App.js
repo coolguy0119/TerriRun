@@ -1,3 +1,4 @@
+import './src/utils/tasks'; // Register background location task
 import React, { useState, useEffect } from 'react';
 import { View, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -18,7 +19,8 @@ import TrackRunScreen from './src/screens/TrackRunScreen';
 import ArenaScreen from './src/screens/ArenaScreen';
 import RaceScreen from './src/screens/RaceScreen';
 import LoginScreen from './src/screens/LoginScreen';
-import { onAuthChange, handleKakaoRedirect } from './src/services/authService';
+import { AuthProvider, useAuth } from './src/context/AuthContext';
+import { handleKakaoRedirect } from './src/services/authService';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -69,52 +71,48 @@ function TabNavigator() {
   );
 }
 
-export default function App() {
-  const [user, setUser] = useState(undefined); // undefined = loading
+function AppContent() {
+  const { auth, login, isLoading } = useAuth();
 
+  if (isLoading) {
+    return <View style={{ flex: 1, backgroundColor: '#0d1117' }} />;
+  }
+
+  if (!auth) {
+    return <LoginScreen onLogin={login} />;
+  }
+
+  return (
+    <NavigationContainer theme={DARK_THEME}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Main"      component={TabNavigator} />
+        <Stack.Screen name="Battle"    component={BattleScreen} />
+        <Stack.Screen name="Delivery"  component={DeliveryScreen} />
+        <Stack.Screen name="TrackList" component={TrackListScreen} />
+        <Stack.Screen name="TrackRun"  component={TrackRunScreen} />
+        <Stack.Screen name="Arena"     component={ArenaScreen} />
+        <Stack.Screen name="Race"      component={RaceScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+export default function App() {
   useEffect(() => {
     if (Platform.OS === 'web') {
       const params = new URLSearchParams(window.location.search);
       if (params.get('code')) {
-        handleKakaoRedirect()
-          .then(u => { if (u) setUser(u); })
-          .catch(console.error);
+        handleKakaoRedirect().catch(console.error);
       }
     }
-    const unsubscribe = onAuthChange((u) => setUser(u));
-    return unsubscribe;
   }, []);
 
-  // Loading
-  if (user === undefined) {
-    return <View style={{ flex: 1, backgroundColor: '#0d1117' }} />;
-  }
-
-  // Not logged in
-  if (!user) {
-    return (
-      <SafeAreaProvider>
-        <StatusBar style="light" />
-        <LoginScreen onLogin={setUser} />
-      </SafeAreaProvider>
-    );
-  }
-
-  // Logged in
   return (
     <SafeAreaProvider>
-      <NavigationContainer theme={DARK_THEME}>
-        <StatusBar style="light" />
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Main"     component={TabNavigator} />
-          <Stack.Screen name="Battle"    component={BattleScreen} />
-          <Stack.Screen name="Delivery"  component={DeliveryScreen} />
-          <Stack.Screen name="TrackList" component={TrackListScreen} />
-          <Stack.Screen name="TrackRun"  component={TrackRunScreen} />
-          <Stack.Screen name="Arena"     component={ArenaScreen} />
-          <Stack.Screen name="Race"      component={RaceScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <StatusBar style="light" />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }

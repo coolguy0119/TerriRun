@@ -5,6 +5,8 @@ const KEYS = {
   TERRITORIES: 'territories',
   ENEMIES: 'enemy_territories',
   RUN_HISTORY: 'run_history',
+  EVENT_ZONES: 'event_zones',
+  AUTH: 'kakao_auth',
 };
 
 // ── Player Data ────────────────────────────────────────────────
@@ -85,6 +87,37 @@ export async function getRunHistory() {
     const raw = await AsyncStorage.getItem(KEYS.RUN_HISTORY);
     return raw ? JSON.parse(raw) : [];
   } catch { return []; }
+}
+
+// ── Event Zones ────────────────────────────────────────────────
+export async function getEventZones() {
+  try {
+    const raw = await AsyncStorage.getItem(KEYS.EVENT_ZONES);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
+export async function saveEventZones(data) {
+  try { await AsyncStorage.setItem(KEYS.EVENT_ZONES, JSON.stringify(data)); }
+  catch (e) { console.error('saveEventZones', e); }
+}
+
+// ── Auth ───────────────────────────────────────────────────────
+export async function getAuth() {
+  try {
+    const raw = await AsyncStorage.getItem(KEYS.AUTH);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
+export async function saveAuth(data) {
+  try { await AsyncStorage.setItem(KEYS.AUTH, JSON.stringify(data)); }
+  catch (e) { console.error('saveAuth', e); }
+}
+
+export async function clearAuth() {
+  try { await AsyncStorage.removeItem(KEYS.AUTH); }
+  catch {}
 }
 
 // ── Daily Reset ────────────────────────────────────────────────
