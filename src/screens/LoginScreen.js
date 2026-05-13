@@ -51,7 +51,7 @@ export default function LoginScreen({ onLogin }) {
       {/* Logo / Title */}
       <View style={styles.logoArea}>
         <View style={styles.logoCircle}>
-          <Ionicons name="map" size={52} color="#22d97a" />
+          <Ionicons name="map" size={52} color="#A78BFA" />
         </View>
         <Text style={styles.title}>TerraRun</Text>
         <Text style={styles.subtitle}>달리며 세계를 정복하세요</Text>
