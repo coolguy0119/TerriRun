@@ -50,10 +50,12 @@ export default function LoginScreen({ onLogin }) {
     <LinearGradient colors={['#0A0818', '#150B35', '#0A0818']} style={[styles.container, { paddingTop: insets.top }]}>
       {/* Logo / Title */}
       <View style={styles.logoArea}>
-        <View style={styles.logoCircle}>
-          <Ionicons name="map" size={52} color="#A78BFA" />
+        <View style={styles.logoHalo}>
+          <LinearGradient colors={['#7C3AED', '#A855F7']} style={styles.logoCircle} start={{ x: 0.2, y: 0 }} end={{ x: 0.8, y: 1 }}>
+            <Text style={styles.logoEmoji}>🏃</Text>
+          </LinearGradient>
         </View>
-        <Text style={styles.title}>TerraRun</Text>
+        <Text style={styles.title}>TERRA RUN</Text>
         <Text style={styles.subtitle}>달리며 세계를 정복하세요</Text>
       </View>
 
@@ -103,15 +105,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 14,
   },
-  logoCircle: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: '#1A0A3E',
-    borderWidth: 2,
-    borderColor: '#A78BFA',
+  logoHalo: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: 'rgba(124,58,237,0.18)',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  logoCircle: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoEmoji: {
+    fontSize: 46,
   },
   title: {
     fontSize: 36,
